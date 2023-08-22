@@ -1,5 +1,5 @@
 <div align="center">
-<h1>🖥️ Sensor Digital em FPGA utilizando Comunicação Serial</h1>
+<h2>🖥️ Sensor Digital em FPGA utilizando Comunicação Serial</h2>
 <div align= "center" >
 <img width="800px" src="https://github.com/nailasuely/IOInterfacesProblem1/assets/98486996/606e08b3-6c44-4ab1-8639-d061b97da3fe">
 
