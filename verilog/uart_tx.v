@@ -1,131 +1,135 @@
-// Módulo para Transmissão UART
+
+ 
 module uart_tx 
-  #(parameter CLKS_PER_BIT = 437) // Parâmetro: Número de ciclos de clock por bit UART
+  #(parameter CLKS_PER_BIT = 434)
   (
-   input       i_Clock,      
-   input       i_Tx_DV,      // Indicador de dado válido de transmissão
-   input [7:0] i_Tx_Byte,    // Byte de dados a ser transmitido
-   output      o_Tx_Active,  // Indicador de transmissão ativa
-   output reg  o_Tx_Serial,  // Sinal serial de saída (dados transmitidos)
-   output      o_Tx_Done     // Indicador de transmissão concluída
+   input       i_Clock,
+   input       i_Tx_DV, // Bit para que o TX comece a transmitir 
+   input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
+   output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
+   output reg  o_Tx_Serial, // Saida serial para envio do dado
+   output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
    );
   
-  // Definição dos estados da máquina de estados
-  parameter s_IDLE         = 3'b000;
-  parameter s_TX_START_BIT = 3'b001;
-  parameter s_TX_DATA_BITS = 3'b010;
-  parameter s_TX_STOP_BIT  = 3'b011;
-  parameter s_CLEANUP      = 3'b100;
+  // Definição dos casos da máquina de estados
+  localparam [2:0] s_IDLE         = 3'b000,
+						 s_TX_START_BIT = 3'b001,
+						 s_TX_DATA_BITS = 3'b010,
+						 s_TX_STOP_BIT  = 3'b011,
+						 s_CLEANUP      = 3'b100;
    
-  // Registros para controlar o estado da máquina de estados
-  reg [2:0]    r_SM_Main     = 0;     // Estado da máquina de estados
-  reg [7:0]    r_Clock_Count = 0;     // Contador de ciclos de clock
-  reg [2:0]    r_Bit_Index   = 0;     // Índice do bit (8 bits no total)
-  reg [7:0]    r_Tx_Data     = 0;     // Byte de dados a ser transmitido
-  reg          r_Tx_Done     = 0;     // Indicador de transmissão concluída
-  reg          r_Tx_Active   = 0;     // Indicador de transmissão ativa
-     
+  reg [2:0]    r_SM_Main     = 0;
+  reg [11:0]   r_Clock_Count = 0;
+  reg [2:0]    r_Bit_Index   = 0;
+  reg [7:0]    r_Tx_Data     = 0;
+  reg          r_Tx_Done     = 0;
+  reg          r_Tx_Active   = 0;
+  
   always @(posedge i_Clock)
     begin
        
       case (r_SM_Main)
         s_IDLE :
           begin
-            o_Tx_Serial   <= 1'b1;         // Mantém a linha em nível alto para o estado de espera
-            r_Tx_Done     <= 1'b0;         // Redefine o indicador de transmissão concluída
-            r_Clock_Count <= 0;            // Redefine o contador de ciclos de clock
-            r_Bit_Index   <= 0;            // Redefine o índice do bit
+            o_Tx_Serial   <= 1'b1;         // Deixa a saída no bit 1, enquanto no IDLE, como é feito no padrão RS-232
+            r_Tx_Done     <= 1'b0;
+            r_Clock_Count <= 12'd0;
+            r_Bit_Index   <= 3'd0;
              
-            if (i_Tx_DV == 1'b1)           // Verifica se há um dado válido para transmitir
+            if (i_Tx_DV == 1'b1) // Se ativada a transmissão
               begin
-                r_Tx_Active <= 1'b1;       // Indica transmissão ativa
-                r_Tx_Data   <= i_Tx_Byte;  // Armazena o byte de dados a ser transmitido
-                r_SM_Main   <= s_TX_START_BIT; // Avança para o estado de início da transmissão
+                r_Tx_Active <= 1'b1;
+                r_Tx_Data   <= i_Tx_Byte;
+                r_SM_Main   <= s_TX_START_BIT; //Muda para o estado de star bit
               end
             else
-              r_SM_Main <= s_IDLE;         // Caso contrário, permanece no estado de espera
+              r_SM_Main <= s_IDLE;
           end // case: s_IDLE
          
-        // Envia o bit de início. Bit de início = 0
+         
+        // Send out Start Bit. Start bit = 0
         s_TX_START_BIT :
           begin
-            o_Tx_Serial <= 1'b0;          // Coloca a linha em nível baixo para o bit de início
-             
-            // Aguarda CLKS_PER_BIT-1 ciclos de clock para concluir o bit de início
+            o_Tx_Serial <= 1'b0;
+            // Espera CLKS_PER_BIT-1 ciclos de clock para finalização do envio do start bit 
             if (r_Clock_Count < CLKS_PER_BIT-1)
               begin
-                r_Clock_Count <= r_Clock_Count + 1;
+                r_Clock_Count <= r_Clock_Count + 12'd1;
                 r_SM_Main     <= s_TX_START_BIT;
-              end
+              end 
             else
               begin
-                r_Clock_Count <= 0;
-                r_SM_Main     <= s_TX_DATA_BITS; // Avança para a transmissão dos bits de dados
+                r_Clock_Count <= 12'd0;
+                r_SM_Main     <= s_TX_DATA_BITS;
               end
           end // case: s_TX_START_BIT
          
-        // Aguarda CLKS_PER_BIT-1 ciclos de clock para concluir os bits de dados         
+         
+        // Espera CLKS_PER_BIT-1 ciclos de clock para a finalização de cada bit de dados         
         s_TX_DATA_BITS :
           begin
-            o_Tx_Serial <= r_Tx_Data[r_Bit_Index]; // Transmite o bit de dados correspondente
+            o_Tx_Serial <= r_Tx_Data[r_Bit_Index];
              
             if (r_Clock_Count < CLKS_PER_BIT-1)
               begin
-                r_Clock_Count <= r_Clock_Count + 1;
+                r_Clock_Count <= r_Clock_Count + 12'd1;
                 r_SM_Main     <= s_TX_DATA_BITS;
               end
             else
               begin
-                r_Clock_Count <= 0;
+                r_Clock_Count <= 12'd0;
                  
-                // Verifica se todos os bits foram transmitidos
+                // Checa sem enviou todos os bits
                 if (r_Bit_Index < 7)
                   begin
-                    r_Bit_Index <= r_Bit_Index + 1;
+                    r_Bit_Index <= r_Bit_Index + 3'd1;
                     r_SM_Main   <= s_TX_DATA_BITS;
                   end
                 else
-                  begin
-                    r_Bit_Index <= 0;
-                    r_SM_Main   <= s_TX_STOP_BIT; // Avança para a transmissão do bit de parada
+                  begin // Se enviou muda para o estado de stop bit
+                    r_Bit_Index <= 3'd0;
+                    r_SM_Main   <= s_TX_STOP_BIT;
                   end
               end
           end // case: s_TX_DATA_BITS
          
-        // Envia o bit de parada
+         
+        // Send out Stop bit.  Stop bit = 1
         s_TX_STOP_BIT :
           begin
-            o_Tx_Serial <= 1'b1;          // Coloca a linha em nível alto para o bit de parada
+            o_Tx_Serial <= 1'b1;
              
-            // Aguarda CLKS_PER_BIT-1 ciclos de clock para concluir o bit de parada
+            // Espera CLKS_PER_BIT-1 cliclos de clock para finalização do stop bit
             if (r_Clock_Count < CLKS_PER_BIT-1)
               begin
-                r_Clock_Count <= r_Clock_Count + 1;
+                r_Clock_Count <= r_Clock_Count + 12'd1;
                 r_SM_Main     <= s_TX_STOP_BIT;
               end
             else
               begin
-                r_Tx_Done     <= 1'b1;     // Indica que a transmissão foi concluída
-                r_Clock_Count <= 0;
-                r_SM_Main     <= s_CLEANUP; // Avança para a fase de limpeza
-                r_Tx_Active   <= 1'b0;     // Desativa a transmissão
+                r_Tx_Done     <= 1'b1; // Indica que o processo de envio foi finalizado
+                r_Clock_Count <= 12'd0;
+                r_SM_Main     <= s_CLEANUP; // Vai para o estado de clear
+                r_Tx_Active   <= 1'b0;
               end
-          end // case: s_TX_STOP_BIT
+          end // case: s_Tx_STOP_BIT
          
-        // Permanece aqui por 1 ciclo de clock antes de retornar ao estado de espera
+         
+        // Fica aqui 1 ciclo de clock
         s_CLEANUP :
           begin
-            r_Tx_Done <= 1'b1;           // Indica que a transmissão foi concluída
-            r_SM_Main <= s_IDLE;         // Retorna ao estado de espera
+            r_Tx_Done <= 1'b1;
+            r_SM_Main <= s_IDLE;
           end
          
+         
         default :
-          r_SM_Main <= s_IDLE;           // Trata estados não reconhecidos como s_IDLE
+          r_SM_Main <= s_IDLE;
          
       endcase
     end
  
-  assign o_Tx_Active = r_Tx_Active;    // Atribui o indicador de transmissão ativa à sa
-  assign o_Tx_Done   = r_Tx_Done;      // Atribui o indicador de transmissão concluída à saída correspondente
-   
+  assign o_Tx_Active = r_Tx_Active;
+  assign o_Tx_Done   = r_Tx_Done;
+
 endmodule 
