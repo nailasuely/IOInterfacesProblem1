@@ -1,0 +1,101 @@
+------------------------------------------------------------
+Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'clock'
+Slack : -6.223
+TNS   : -543.759
+
+Type  : Slow 1200mV 85C Model Setup 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -3.657
+TNS   : -202.773
+
+Type  : Slow 1200mV 85C Model Hold 'clock'
+Slack : 0.393
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : 0.411
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -1.284
+TNS   : -128.117
+
+Type  : Slow 1200mV 85C Model Removal 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : 1.090
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'clock'
+Slack : -3.000
+TNS   : -215.025
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -1.285
+TNS   : -150.345
+
+Type  : Slow 1200mV 0C Model Setup 'clock'
+Slack : -5.522
+TNS   : -481.028
+
+Type  : Slow 1200mV 0C Model Setup 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -3.253
+TNS   : -176.319
+
+Type  : Slow 1200mV 0C Model Hold 'clock'
+Slack : 0.345
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : 0.361
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -1.088
+TNS   : -108.033
+
+Type  : Slow 1200mV 0C Model Removal 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : 1.013
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'clock'
+Slack : -3.000
+TNS   : -215.025
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -1.285
+TNS   : -150.345
+
+Type  : Fast 1200mV 0C Model Setup 'clock'
+Slack : -2.654
+TNS   : -185.306
+
+Type  : Fast 1200mV 0C Model Setup 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -1.260
+TNS   : -42.870
+
+Type  : Fast 1200mV 0C Model Hold 'clock'
+Slack : 0.178
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : 0.187
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -0.220
+TNS   : -13.506
+
+Type  : Fast 1200mV 0C Model Removal 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : 0.532
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'clock'
+Slack : -3.000
+TNS   : -177.240
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz|clk'
+Slack : -1.000
+TNS   : -117.000
+
+------------------------------------------------------------

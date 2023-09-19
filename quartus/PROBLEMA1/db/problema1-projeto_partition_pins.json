@@ -1,0 +1,37 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "tx_serial",
+					"strict" : false
+				},
+				{
+					"name" : "segmento_B",
+					"strict" : false
+				},
+				{
+					"name" : "segmento_C",
+					"strict" : false
+				},
+				{
+					"name" : "segmento_A",
+					"strict" : false
+				},
+				{
+					"name" : "dht_data",
+					"strict" : false
+				},
+				{
+					"name" : "clock",
+					"strict" : false
+				},
+				{
+					"name" : "rx_serial",
+					"strict" : false
+				}
+			]
+		}
+	]
+}

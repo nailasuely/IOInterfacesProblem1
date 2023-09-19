@@ -1,0 +1,5 @@
+Warning (10268): Verilog HDL information at uart_tx.v(26): always construct contains both blocking and non-blocking assignments File: H:/PROBLEMA1/uart_tx.v Line: 26
+Warning (10268): Verilog HDL information at general_MEF.v(67): always construct contains both blocking and non-blocking assignments File: H:/PROBLEMA1/general_MEF.v Line: 67
+Warning (10268): Verilog HDL information at general_MEF.v(107): always construct contains both blocking and non-blocking assignments File: H:/PROBLEMA1/general_MEF.v Line: 107
+Warning (10268): Verilog HDL information at DHT11_Made_in_china.v(220): always construct contains both blocking and non-blocking assignments File: H:/PROBLEMA1/DHT11_Made_in_china.v Line: 220
+Warning (10268): Verilog HDL information at sensor_01_MEF.v(122): always construct contains both blocking and non-blocking assignments File: H:/PROBLEMA1/sensor_01_MEF.v Line: 122

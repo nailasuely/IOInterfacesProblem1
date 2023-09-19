@@ -1,0 +1,180 @@
+module general_MEF(clock, dht_data, rx_serial,tx_serial);
+	input clock, rx_serial;
+	inout dht_data;
+	output tx_serial;
+	
+	/*
+	CRIAR UM DECODIFICADOR PARA DEPENDENDO DA INFORMAÇÃO QUE CHEGAR PELO RX
+	DEFINIR O CODIGO DE SAIDA PARA O COMPUTADOR
+	*/
+
+
+
+	/*
+	module uart_rx 
+  (
+   input        i_Clock,
+   input        i_Rx_Serial, // Pino de Entrada do RX
+   output       o_Rx_DV, // Saída para indicar se o dado já foi recebido
+   output [7:0] o_Rx_Byte // Saida do dado recebido
+   );
+	*/
+	
+	wire rx_done;
+	reg tx_done, verify_code;
+	reg [7:0] protocol_01;
+	wire [7:0] info_rx;
+	wire [8:0] info_interface; //informação que vem com primeiros 8 bits de dados
+								//ultimo bit, o MSB, é para informar informação 100% lida
+	uart_rx receiver_uart (clock, rx_serial, rx_done, info_rx);
+	
+	
+	localparam [1:0] s_idle =2'b00, s_check_code =2'b01, s_invalid_code = 2'b10, s_reading = 2'b11;
+	
+	reg [1:0] choose_case;
+	
+	
+	
+	always @(posedge clock)
+		begin
+			case(choose_case)
+				s_idle: 	//estado de espera
+					begin
+						if(rx_done == 1'b1)
+							begin
+								choose_case <=s_check_code;
+							end
+						else
+							begin
+								choose_case <= s_idle;
+								
+							end
+						
+					end
+					
+				s_check_code: //estado de verificaçao do codigo recebido na uart
+					begin
+						//por enquanto rx_serial, mas tem que vir esse dado do buffer
+						//repetir essa condição para questão dos endereços
+						//USAR DECODER EM VEZ DE IF
+						/*
+						if(rx_serial == 8'b00000000 || rx_serial == 8'b00000001 || rx_serial == 8'b00000010 || rx_serial == 8'b00000011 || rx_serial == 8'b00000100 || rx_serial == 8'b00000110 )
+							begin
+								/*
+								module uart_tx 
+									(
+									input       i_Clock,
+									input       i_Tx_DV, // Bit para que o TX comece a transmitir 
+									input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
+									output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
+									output reg  o_Tx_Serial, // Saida serial para envio do dado
+									output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
+									);
+								
+								//enviar a informação de que recebeu o dado do computador, e aquele dado foi correto
+								uart_tx send_data (clock, 1'b1, 8'h0xF0, , tx_serial, tx_done);
+								choose_case <= s_reading;
+							end
+							*/
+
+						code_verify(rx_serial, verify_code);
+						if(verify_code == 1'b1)
+							begin
+								
+								module uart_tx 
+									(
+									input       i_Clock,
+									input       i_Tx_DV, // Bit para que o TX comece a transmitir 
+									input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
+									output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
+									output reg  o_Tx_Serial, // Saida serial para envio do dado
+									output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
+									);
+								
+								//enviar a informação de que recebeu o dado do computador, e aquele dado foi correto
+								uart_tx send_data (clock, 1'b1, 8'h0xF0, , tx_serial, tx_done);
+								choose_case <= s_reading;
+							end
+						else
+							begin
+								/*
+								module uart_tx 
+									(
+									input       i_Clock,
+									input       i_Tx_DV, // Bit para que o TX comece a transmitir 
+									input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
+									output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
+									output reg  o_Tx_Serial, // Saida serial para envio do dado
+									output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
+									);
+								*/
+								//enviar a informação de que o comando recebido é invalido
+								uart_tx send_data (clock, 1'b1, 8'h0xFB, , tx_serial, tx_done);
+								choose_case <= s_idle;
+							end
+								
+					end
+					
+				s_invalid_code: //codigo que informa sobre o codigo ser invalido
+					begin
+						/*
+						module uart_tx 
+							(
+							input       i_Clock,
+							input       i_Tx_DV, // Bit para que o TX comece a transmitir 
+							input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
+							output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
+							output reg  o_Tx_Serial, // Saida serial para envio do dado
+							output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
+							);
+						*/
+						uart_tx send_data (clock, 1'b1, 8'h0xFB, , tx_serial, tx_done);
+					end
+					
+				s_reading: //estado que realiza a leitura do sensor
+					begin
+						if(rx_serial == 8'h0x05 || rx_serial == 8'h0x06)
+							begin
+								choose_case <= s_idle;
+							end
+						if(rx_serial == 8'h0x03 || rx_serial == 8'h0x04)
+							begin
+								choose_case <= s_reading;
+							end
+						if(info_interface[8]==1'b1)
+							begin
+								/*
+								module uart_tx 
+									(
+									input       i_Clock,
+									input       i_Tx_DV, // Bit para que o TX comece a transmitir 
+									input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
+									output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
+									output reg  o_Tx_Serial, // Saida serial para envio do dado
+									output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
+									);
+								*/
+
+								//pensar como vai mandar esse 2 dado
+								uart_tx send_data (clock, info_interface[8], info_interface[7:0], , tx_serial, tx_done);
+								//provavelmente vai ter outra chamada dessa função de envio de dados
+								choose_case <= s_IDLE;
+							end
+						else
+							begin
+								choose_case <=s_reading;
+							end
+					end
+				
+				default: //define o estado padrao
+					choose_case <= s_idle;
+			endcase
+		end
+	
+	
+	
+
+
+
+
+endmodule 

@@ -1,0 +1,40 @@
+
+State Machine - |general_MEF|choose_case
+Name choose_case.s_reading choose_case.s_invalid_code choose_case.s_check_code choose_case.s_idle choose_case.s_information 
+choose_case.s_idle 0 0 0 0 0 
+choose_case.s_check_code 0 0 1 1 0 
+choose_case.s_invalid_code 0 1 0 1 0 
+choose_case.s_reading 1 0 0 1 0 
+choose_case.s_information 0 0 0 1 1 
+
+State Machine - |general_MEF|sensor_01_MEF:sensor00|choose_case
+Name choose_case.s_receiver_data 
+choose_case.s_idle 0 
+choose_case.s_receiver_data 1 
+
+State Machine - |general_MEF|sensor_01_MEF:sensor00|DHT11_Made_in_china:dht11_sensor|state
+Name state.s10 state.s9 state.s8 state.s7 state.s6 state.s5 state.s4 state.s3 state.s2 state.s1 
+state.s1 0 0 0 0 0 0 0 0 0 0 
+state.s2 0 0 0 0 0 0 0 0 1 1 
+state.s3 0 0 0 0 0 0 0 1 0 1 
+state.s4 0 0 0 0 0 0 1 0 0 1 
+state.s5 0 0 0 0 0 1 0 0 0 1 
+state.s6 0 0 0 0 1 0 0 0 0 1 
+state.s7 0 0 0 1 0 0 0 0 0 1 
+state.s8 0 0 1 0 0 0 0 0 0 1 
+state.s9 0 1 0 0 0 0 0 0 0 1 
+state.s10 1 0 0 0 0 0 0 0 0 1 
+
+State Machine - |general_MEF|uart_tx:transmiter_data|state
+Name state.STOP state.DATA state.START state.00 
+state.00 0 0 0 0 
+state.START 0 0 1 1 
+state.DATA 0 1 0 1 
+state.STOP 1 0 0 1 
+
+State Machine - |general_MEF|uart_rx:receiver_uart|state
+Name state.STOP state.DATA state.START state.00 
+state.00 0 0 0 0 
+state.START 0 0 1 1 
+state.DATA 0 1 0 1 
+state.STOP 1 0 0 1 
