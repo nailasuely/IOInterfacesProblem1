@@ -1,145 +1,131 @@
+/*
+Este módulo Verilog descreve uma máquina de recebimento UART
+que é responsável por receber dados seriais em uma placa com um clock de 50 MHz
+e taxa de baud de 9600.
+*/
 
-module uart_rx 
-  #(parameter CLKS_PER_BIT = 457)
-  (
-   input        i_Clock,
-   input        i_Rx_Serial, // Pino de Entrada do RX
-   output       o_Rx_DV, // Saída para indicar se o dado já foi recebido
-   output [7:0] o_Rx_Byte // Saida do dado recebido
-	
-   );
-	
-   //Definicação dos estados da máquina de estados 
-  localparam [2:0] s_IDLE         = 3'b000,
-						 s_RX_START_BIT = 3'b001,
-						 s_RX_DATA_BITS = 3'b010,
-						 s_RX_STOP_BIT  = 3'b011,
-						 s_CLEANUP      = 3'b100;
-   
-  reg           r_Rx_Data_R = 1'b1;
-  reg           r_Rx_Data   = 1'b1;
-   
-  reg [11:0]     r_Clock_Count = 0;
-  reg [2:0]     r_Bit_Index   = 0; //8 bits total
-  reg [7:0]     r_Rx_Byte     = 0;
-  reg           r_Rx_DV       = 0;
-  reg [2:0]     r_SM_Main     = 0;
+module uart_rx #(
+    parameter CLKS_PER_BIT = 5208 // (50,000,000 / 9,600 = 5208)
+)(
+    input  clk,  // Entrada: Clock da placa a 50 MHz
+    input  input_rx, // Entrada: Dados recebidos pela porta serial
+    output done, // Saída: Sinalizado quando um dado foi recebido completamente
+    output [7:0] out_rx  // Saída: Dados de saída completos
+);
 
-   
-  // Purpose: Double-register the incoming data.
-  // This allows it to be used in the UART RX Clock Domain.
-  // (It removes problems caused by metastability)
-  always @(posedge i_Clock)
-    begin
-      r_Rx_Data_R <= i_Rx_Serial;
-      r_Rx_Data   <= r_Rx_Data_R;
+    // ──── Definição dos estados da máquina de recebimento UART ─────
+    localparam IDLE  = 2'b00,
+               START = 2'b01,
+               DATA  = 2'b10,
+               STOP  = 2'b11;
+
+    // ──── Declaração dos registradores internos ─────
+    reg data_serial_buffer = 1'b1;
+    // Registrador para armazenar o dado recebido
+    reg rx_data            = 1'b1;
+    // Registrador para registrar o estado da máquina de recebimento
+    reg [1:0]  state       = 1'b0;
+    // Contador de tempo usado para determinar a taxa de baud
+    reg [12:0] counter     = 13'd0;
+    // Índice do bit atual sendo recebido
+    reg [2:0]  bit_index   = 1'b0;
+    // Flag para sinalizar quando um dado está disponível para saída
+    reg        data_avail  = 1'b0;
+    // Registrador para armazenar o byte de dados recebido
+    reg [7:0]  data_reg    = 1'b0;
+
+   // ────  Declaração das saídas ────
+    assign out_rx = data_reg;
+    assign done = data_avail;
+
+    always @(posedge clk) begin
+        data_serial_buffer <= input_rx;
+        rx_data            <= data_serial_buffer;
     end
-   
-   
-  // Purpose: Control RX state machine
-  always @(posedge i_Clock)
-    begin
-       
-      case (r_SM_Main)
-        s_IDLE :
-          begin
-            r_Rx_DV       <= 1'b0;
-            r_Clock_Count <= 12'd0;
-            r_Bit_Index   <= 3'd0;
-             
-            if (r_Rx_Data == 1'b0)          // Start bit detectado, muda pro estado start bit
-              r_SM_Main <= s_RX_START_BIT;
-            else
-              r_SM_Main <= s_IDLE;
-          end
-         
-        // Checa na metade do start bit para certificar que ainda é baixo
-        s_RX_START_BIT :
-          begin
-            if (r_Clock_Count == (CLKS_PER_BIT-1)/2)
-              begin
-                if (r_Rx_Data == 1'b0)
-                  begin
-                    r_Clock_Count <= 12'd0;  //Reseta o counter
-                    r_SM_Main     <= s_RX_DATA_BITS; // Vai para o estado de recebimento dos bits de dado
-                  end
+
+    // ──── Lógica de transição de estados ────
+    always @(posedge clk) begin
+        case (state)
+            IDLE:begin
+
+                data_avail <= 0;
+                counter    <= 13'd0;
+                bit_index  <= 3'b000;
+                // Verifica se o sinal de entrada é baixo para iniciar a recepção.
+                if (rx_data == 0)
+                    state <= START;
                 else
-                  r_SM_Main <= s_IDLE; // Caso não, volta para o estado IDLE
-              end
-            else
-              begin
-                r_Clock_Count <= r_Clock_Count + 12'd1;
-                r_SM_Main     <= s_RX_START_BIT;
-              end
-          end // case: s_RX_START_BIT
-         
-         
-        // Espera CLKS_PER_BIT-1 ciclos de clock para ter a amostra do dado
-        s_RX_DATA_BITS :
-          begin
-            if (r_Clock_Count < CLKS_PER_BIT-1)
-              begin
-                r_Clock_Count <= r_Clock_Count + 12'd1;
-                r_SM_Main     <= s_RX_DATA_BITS;
-              end
-            else
-              begin
-                r_Clock_Count          <= 12'd0; //Se o contador chegar ao limite, zera-se ele 
-                r_Rx_Byte[r_Bit_Index] <= r_Rx_Data; // E coloca-se o dado recebido no momento no registrador na posição do index
-                 
-                // Check if we have received all bits
-                if (r_Bit_Index < 7)
-                  begin
-                    r_Bit_Index <= r_Bit_Index + 3'd1; // Se o index ainda não chegou ao limite, incremeta-se +1
-                    r_SM_Main   <= s_RX_DATA_BITS; 
-                  end
-                else
-                  begin
-                    r_Bit_Index <= 3'd0;
-                    r_SM_Main   <= s_RX_STOP_BIT; // Ao receber todos os 8 bits, muda-se para o caso de stop bit
-                  end
-              end
-          end 
-     
-     
-        // Receive Stop bit.  Stop bit = 1
-        s_RX_STOP_BIT :
-          begin
-            // Espera CLKS_PER_BIT-1 ciclos de clock para o stop bit terminar
-            if (r_Clock_Count < CLKS_PER_BIT-1)
-              begin
-                r_Clock_Count <= r_Clock_Count + 12'd1;
-                r_SM_Main     <= s_RX_STOP_BIT;
-              end
-            else
-              begin
-                r_Rx_DV       <= 1'b1;
-                r_Clock_Count <= 12'd0;
-                r_SM_Main     <= s_CLEANUP;
-              end
-          end 
-     
-         
-        // Fica neste estado por um ciclo de clock, para dar tempo do DV
-        s_CLEANUP :
-          begin
-						r_SM_Main <= s_IDLE;
-						r_Rx_DV   <= 1'b0;
-          end
-         
-         
-        default :
-          r_SM_Main <= s_IDLE;
-         
-      endcase
-    end   
+                    state <= IDLE;
+            end
+            // Estado de início (start)
+            START: begin
+                data_avail   <= 0;
+                bit_index    <= 3'b000;
+                // Verifica se o contador atingiu metade do período do bit.
+                if (counter == (CLKS_PER_BIT - 1) / 2) begin
+                    counter <= 13'd0;
+                     // Verifica se o sinal de entrada permanece baixo para continuar a recepção.
+                    if (rx_data == 0) begin
+                        state <= DATA;
+                    end
+                    else
+                        state <= IDLE;
+                end
+                else begin
+                    counter <= counter + 13'b1;
+                    state   <= START;
+                end
+            end
 
+            DATA: begin
+                data_avail <= 0;
+                // Incrementa o contador de tempo e permanece no estado de recepção de dados.
+                if (counter < CLKS_PER_BIT - 1) begin
+                    counter <= counter + 13'b1;
+                    state   <= DATA;
+                end
+                else begin
+                    counter             <= 13'd0;
+                    data_reg[bit_index] <= rx_data;
 
+                    if (bit_index >= 7) begin
+                        // Zerar o índice do bit e ir para o estado de parada
+                        bit_index <= 3'b000;
+                        state <= STOP;
+                    end
+                    else
+                    begin
+                        // Incrementa o contador de tempo e permanece no estado de início.
+                        bit_index <= bit_index + 3'b1;
+                        state <= DATA;
+                    end
+                end
+            end
 
-  
-  assign o_Rx_DV   = r_Rx_DV;
-  assign o_Rx_Byte = r_Rx_Byte;
+            // Estado de parada
+            STOP:begin
+                data_avail <= 1;
+                bit_index <= 3'b000;
 
-  
-   
-endmodule // uart_rx
+                if (counter >= CLKS_PER_BIT - 1) begin
+                    counter <= 13'd0;
+                    state <= IDLE;
+                end
+                else begin
+                    counter <= counter + 13'b1;
+                    state <= STOP;
+                end
+            end
+
+            // Estado padrão (caso de erro)
+            // Basicamente ele retorna ao estado de idle e limpa variáveis.
+            default: begin
+                state <= IDLE;
+                data_avail <= 0;
+                counter    <= 13'd0;
+                bit_index  <= 0;
+            end
+        endcase
+    end
+
+endmodule

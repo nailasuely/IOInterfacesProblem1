@@ -1,135 +1,122 @@
+  /*
+    Módulo TX
 
- 
-module uart_tx 
-  #(parameter CLKS_PER_BIT = 434)
-  (
-   input       i_Clock,
-   input       i_Tx_DV, // Bit para que o TX comece a transmitir 
-   input [7:0] i_Tx_Byte, // Dado que deve ser transmitido 
-   output      o_Tx_Active, // Bit para indicar se a transmissão está ativa
-   output reg  o_Tx_Serial, // Saida serial para envio do dado
-   output      o_Tx_Done // Bit para indicar que a transmissão foi finalizada
-   );
-  
-  // Definição dos casos da máquina de estados
-  localparam [2:0] s_IDLE         = 3'b000,
-						 s_TX_START_BIT = 3'b001,
-						 s_TX_DATA_BITS = 3'b010,
-						 s_TX_STOP_BIT  = 3'b011,
-						 s_CLEANUP      = 3'b100;
-   
-  reg [2:0]    r_SM_Main     = 0;
-  reg [11:0]   r_Clock_Count = 0;
-  reg [2:0]    r_Bit_Index   = 0;
-  reg [7:0]    r_Tx_Data     = 0;
-  reg          r_Tx_Done     = 0;
-  reg          r_Tx_Active   = 0;
-  
-  always @(posedge i_Clock)
-    begin
-       
-      case (r_SM_Main)
-        s_IDLE :
-          begin
-            o_Tx_Serial   <= 1'b1;         // Deixa a saída no bit 1, enquanto no IDLE, como é feito no padrão RS-232
-            r_Tx_Done     <= 1'b0;
-            r_Clock_Count <= 12'd0;
-            r_Bit_Index   <= 3'd0;
-             
-            if (i_Tx_DV == 1'b1) // Se ativada a transmissão
-              begin
-                r_Tx_Active <= 1'b1;
-                r_Tx_Data   <= i_Tx_Byte;
-                r_SM_Main   <= s_TX_START_BIT; //Muda para o estado de star bit
-              end
-            else
-              r_SM_Main <= s_IDLE;
-          end // case: s_IDLE
-         
-         
-        // Send out Start Bit. Start bit = 0
-        s_TX_START_BIT :
-          begin
-            o_Tx_Serial <= 1'b0;
-            // Espera CLKS_PER_BIT-1 ciclos de clock para finalização do envio do start bit 
-            if (r_Clock_Count < CLKS_PER_BIT-1)
-              begin
-                r_Clock_Count <= r_Clock_Count + 12'd1;
-                r_SM_Main     <= s_TX_START_BIT;
-              end 
-            else
-              begin
-                r_Clock_Count <= 12'd0;
-                r_SM_Main     <= s_TX_DATA_BITS;
-              end
-          end // case: s_TX_START_BIT
-         
-         
-        // Espera CLKS_PER_BIT-1 ciclos de clock para a finalização de cada bit de dados         
-        s_TX_DATA_BITS :
-          begin
-            o_Tx_Serial <= r_Tx_Data[r_Bit_Index];
-             
-            if (r_Clock_Count < CLKS_PER_BIT-1)
-              begin
-                r_Clock_Count <= r_Clock_Count + 12'd1;
-                r_SM_Main     <= s_TX_DATA_BITS;
-              end
-            else
-              begin
-                r_Clock_Count <= 12'd0;
-                 
-                // Checa sem enviou todos os bits
-                if (r_Bit_Index < 7)
-                  begin
-                    r_Bit_Index <= r_Bit_Index + 3'd1;
-                    r_SM_Main   <= s_TX_DATA_BITS;
-                  end
-                else
-                  begin // Se enviou muda para o estado de stop bit
-                    r_Bit_Index <= 3'd0;
-                    r_SM_Main   <= s_TX_STOP_BIT;
-                  end
-              end
-          end // case: s_TX_DATA_BITS
-         
-         
-        // Send out Stop bit.  Stop bit = 1
-        s_TX_STOP_BIT :
-          begin
-            o_Tx_Serial <= 1'b1;
-             
-            // Espera CLKS_PER_BIT-1 cliclos de clock para finalização do stop bit
-            if (r_Clock_Count < CLKS_PER_BIT-1)
-              begin
-                r_Clock_Count <= r_Clock_Count + 12'd1;
-                r_SM_Main     <= s_TX_STOP_BIT;
-              end
-            else
-              begin
-                r_Tx_Done     <= 1'b1; // Indica que o processo de envio foi finalizado
-                r_Clock_Count <= 12'd0;
-                r_SM_Main     <= s_CLEANUP; // Vai para o estado de clear
-                r_Tx_Active   <= 1'b0;
-              end
-          end // case: s_Tx_STOP_BIT
-         
-         
-        // Fica aqui 1 ciclo de clock
-        s_CLEANUP :
-          begin
-            r_Tx_Done <= 1'b1;
-            r_SM_Main <= s_IDLE;
-          end
-         
-         
-        default :
-          r_SM_Main <= s_IDLE;
-         
-      endcase
+    Este módulo é responsável pela transmissão de dados através de uma porta UART.
+    Ele opera em quatro estados: IDLE, START, DATA e STOP.
+    Durante a transmissão, ele envia os bits de dados com a taxa de baud especificada.
+    (50,000,000 / 9,600 = 5208)
+    */
+module uart_tx #(
+    parameter CLKS_PER_BIT = 5208
+) (
+    input        clk,
+    input        initial_data,
+    input  [7:0] data_transmission,
+    output reg   out_tx,
+    output reg   done
+);
+
+    // ──── ESTADOS DA MÁQUINA DE ESTADOS DA UART ────
+    localparam IDLE  = 2'b00,
+               START = 2'b01,
+               DATA  = 2'b10,
+               STOP  = 2'b11;
+
+    // ──── REGISTRADORES INTERNOS ────
+    reg [1:0]  state = 0;
+    reg [12:0] counter = 0;
+    reg [2:0]  bit_index = 0;
+    reg [7:0]  data_bit = 0;
+
+
+    // ──── Lógica de transição de estados ────
+    always @(posedge clk) begin
+        case (state)
+            // ESPERA:
+            // Inicializa as variáveis e espera por dados a serem enviados.
+            IDLE: begin
+                out_tx    = 1;
+                done      = 0;
+                counter   = 0;
+                bit_index = 0;
+
+                // Verifica se há dados a serem enviados.
+                if (initial_data == 1) begin
+
+                    data_bit  <= data_transmission;
+                    state <= START;
+                end
+                else begin
+                    state <= IDLE;
+                end
+            end
+            //Estado de início da transmissão:
+            // Inicializa as variáveis e envia o bit de start.
+            START: begin
+
+                out_tx <= 0;
+                done <= 0;
+                bit_index = 0;
+
+                if (counter < CLKS_PER_BIT - 1) begin
+                    counter <= counter + 13'b1;
+                    state <= START;
+                end
+                else begin
+                    counter <= 0;
+                    state <= DATA;
+                end
+            end
+            // Estado de transmissão de dados:
+            // Envia os bits de dados.
+            DATA: begin
+
+                done <= 0;
+                out_tx <= data_bit[bit_index];
+
+                if (counter < CLKS_PER_BIT - 1) begin
+                    counter <= counter + 13'b1;
+                    state <= DATA;
+                end
+                else begin
+                    counter <= 13'd0;
+                    if (bit_index >= 7) begin
+                        bit_index <= 0;
+                        state <= STOP;
+                    end
+                    else begin
+                        bit_index <= bit_index + 1'b1;
+                        state <= DATA;
+                    end
+                end
+            end
+            // Estado de parada da transmissão:
+            // Envia o bit de stop e conclui a transmissão.
+            STOP: begin
+                out_tx <= 1;
+                bit_index = 0;
+
+                if (counter < CLKS_PER_BIT - 1) begin
+                    counter <= counter + 13'b1;
+                    state <= STOP;
+                end
+                else begin
+                    done <= 1;
+                    state <= IDLE;
+
+                    counter <= 0;
+                end
+            end
+            // Estado padrão (caso de erro):
+            // Retorna ao estado de ociosidade e limpa variáveis.
+            default: begin
+                state <= IDLE;
+                out_tx = 1;
+                done = 0;
+                counter = 0;
+                bit_index = 0;
+                end
+        endcase
     end
- 
-  assign o_Tx_Active = r_Tx_Active;
-  assign o_Tx_Done   = r_Tx_Done;
 
-endmodule 
+endmodule
