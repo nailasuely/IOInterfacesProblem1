@@ -48,8 +48,15 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 - [Requisitos](#requisitos)
 - [Implementação](#implementação)
   - [Protocolo](#protocolo)
+  - [UART Transmitter](#uart-transmitter)
+  - [UART Receiver](#uart-receiver)
+  - [DHT11](#dht11)
+  - [Sensor 01](#sensor-01)
+  - [Máquina Geral](#máquina-geral)
+  - [Contadores](#contadores)
   - [Desenvolvimento em C](#desenvolvimento-em-c)
-  - [Desenvolvimento em Verilog](#desenvolvimento-em-verilog)
+- [Testes](#testes)
+- [Uso de Pinos e LEs](#uso-de-pinos-e-les)
 - [Conclusão](#conclusão) 
 - [Tutor](#tutor)
 - [Equipe](#equipe)
@@ -89,7 +96,7 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
                      
 
 
-### UART_TX
+### UART Transmitter
 - Clk (Clock): Esta é uma entrada que representa o sinal de clock do sistema.
 
 - Initial_data (Dados Iniciais): Esta entrada é um sinal de controle que indica a presença de dados a serem transmitidos. Quando "initial_data" é igual a 1, isso significa que há dados a serem transmitidos e inicia o processo de transmissão.
@@ -111,7 +118,7 @@ O estado de data, os bits de dados são transmitidos um por um. O sinal de saíd
 No estado de parada(stop), gera o bit de stop indicando o término da transmissão. O sinal de saída tx é colocado em nível alto para indicar o fim do quadro de dados. O mesmo contador utilizado anteriormente serve para garantir que o bit de stop tenha duração correta, e após a conclusão do bit de stop, a saída “done” é posta em nível alto identificando que a transmissão foi concluída.   
 
 	
-### UART_RX
+### UART Receiver
 - Clk: Esta é a entrada do clock do sistema, que normalmente é fornecida por um oscilador ou uma fonte de clock externa. O sinal de clock é usado para sincronizar todas as operações dentro do módulo.
 - Input_rx: Esta entrada recebe os dados seriais assíncronos da porta serial de comunicação. Os dados normalmente chegam como uma sequência de pulsos elétricos representando bits individuais.
 - Done: Esta saída é um sinal que indica quando um dado foi recebido completamente e está pronto para ser lido. Quando este sinal está ativo (alto), significa que os bits de dados foram capturados e formaram um byte completo.
@@ -167,12 +174,29 @@ O módulo opera como uma máquina de estados finitos para controlar a comunicaç
 
 - s10 (Final da leitura):Marca o final da leitura de dados.Reinicia o estado para s1 e aguarda o próximo ciclo de aquisição de dados.
 
+### Sensor 01
+Este módulo opera em dois estados principais: s_idle (ocioso) e s_receiver_data (recebendo dados). O estado atual é determinado pelo registrador choose_case, que é atualizado em resposta a eventos e entradas.
+
+A interação com o sensor DHT11 ocorre por meio da instância do módulo DHT11. Esse módulo específico é responsável por estabelecer a comunicação com o sensor, ler os dados fornecidos por ele e detectar qualquer erro de leitura.
+O módulo faz uso de temporizadores para gerar atrasos temporais controlados. O temporizador timer_pulso_reset é ativado em resposta a um sinal de ativação e gera um atraso de aproximadamente 2 segundos antes de permitir a transição para o próximo estado. O temporizador timer_pulso_mudar_estado é usado de maneira semelhante, mas gera um atraso de cerca de 2 segundos em outro contexto.
+
+A principal entrada deste módulo é request, que indica o tipo de informação desejada pelo sistema principal. Dependendo do valor de request, o módulo processa os dados recebidos do sensor DHT11 de maneira diferente.
+
+Quando o sistema principal emite um pedido de dados, o módulo responde ativando o sensor, redefinindo-o para garantir que os dados anteriores sejam apagados e aguardando um tempo específico antes de passar para o próximo estado. Isso é feito para permitir que o sensor esteja pronto para fornecer dados atualizados.
+Assim que os dados são lidos com sucesso do sensor DHT11, o módulo os processa de acordo com o tipo de informação solicitada. Ele separa os bits relevantes dos dados e os coloca nos locais apropriados no registrador information. Além disso, ele sinaliza que a leitura foi concluída definindo info_fineshed como 1.
+Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por meio do sinal error_sensor. O módulo então define information de acordo para indicar a situação do sensor.
+
 
 
 ## Conclusão 
 O objetivo principal deste trabalho era compreender a integração entre FPGA e códigos em linguagem C para desenvolver um sistema computacional, ao mesmo tempo em que se aprofundaram os conhecimentos sobre comunicação serial. Com a conclusão do projeto é verdadeiro afirmar que esse objetivo foi plenamente alcançado, visto que o projeto conseguiu estabelecer uma comunicação eficaz entre o computador e a placa, atendendo a todos os requisitos estabelecidos. 
 
 Em relação à execução do projeto, a maioria das ferramentas utilizadas já eram familiares aos discentes, incluindo o software Quartus e o osciloscópio. No entanto, nesse projeto, a novidade incluiu a utilização da placa Mercurio IV e o sensor DHT11. As principais dificuldades associadas ao projeto surgiram em decorrência do uso das placas, por conta da quantidade limitada, e a imperícia dos alunos com relação aos cuidados no uso do DHT11. Com exceção desses desafios, o projeto transcorreu sem intercorrências significativas.
+
+## Executando o projeto
+O projeto é compatível com o kit de desenvolvimento Mercurio IV, em conjunto com o sensor DHT11. O módulo do programa em C pode ser adaptado para o sistema operacional Windows, mas foi inicialmente desenvolvido para o ambiente Linux. Como resultado, existem funcionalidades projetadas especialmente para o Linux.
+
+Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, baixar os arquivos disponíveis neste repositório e baixar algum software que permita configurar e montar as entradas e saídas da placa Mercurio IV, a exemplo o Quartus. Além disso, é essencial contar com um computador para controlar o sensor que estará conectado à placa. Uma vez que todos os materiais estejam disponíveis, será necessário configurar as entradas e saídas da placa, como os pinos da comunicação serial e da comunicação com o sensor. Por fim, basta executar o código C no terminal e fazer as solicitações desejadas. 
 
 
 ## Tutor 
@@ -183,5 +207,11 @@ Em relação à execução do projeto, a maioria das ferramentas utilizadas já 
 - [Rhian Pablo](https://github.com/rhianpablo11)
 - [João Gabriel Araujo](https://github.com/joaogabrielaraujo)
 - [Amanda Lima](https://github.com/AmandaLimaB)
-  
+
+## Referências 
+
+> - [1] Santos, B. P., Silva, L. A., Celes, C. S. F. S., Borges, J. B., Neto, B. S. P., Vieira, M. A. M., ... & Loureiro, A. (2016). Internet das coisas: da teoria à prática. Minicursos SBRC-Simpósio Brasileiro de Redes de Computadores e Sistemas Distribuıdos, 31, 16.
+
+
+
 </div>
