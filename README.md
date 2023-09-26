@@ -57,6 +57,31 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 
 ## Implementação
 
+## Protocolo
+| Código                                                                            | Descrição do comando                                                                                                                                                                 |
+| :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|  0x00        | Solicita a situação atual do sensor     |
+| 0x01                | Sensor funcionando normalmente                                                                                                                                                 |
+| 0x02           | Solicita a medida de umidade atual                                                                                    |
+| 0x03                  | Ativa sensoriamento contínuo de temperatura                                                                                                        |
+| 0x04                  | Ativa sensoriamento contínuo de umidade                                                                                                                                                  |
+| 0x05 | Desativa sensoriamento contínuo de temperatura                                                                                                                             |
+| 0x06              | Desativa sensoriamento contínuo de umidade                                                                                                              |
+
+
+| Código                                                                            | Descrição do comando                                                                                                                                                               |
+| :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0x1F | Sensor com problema                                                                                                                             |
+| 0x07             | Sensor funcionando normalmente 
+| 0x08        | Medida de umidade       |
+| 0x09        | Medida de temperatura     |
+| 0x0A        | Confirmação de desativação de sensoriamento contínuo de temperatura      |
+| 0x0B        | Confirmação de desativação de sensoriamento contínuo de umidade     |
+| 0xF0        | Medida de temperatura continua     |
+| 0xFE         |Medida de umidade continua    |
+|0xFC        | Byte secundario para complementar o byte primario     |
+|0xFB        | Comando inválido      |
+                     
 
 ## Tutor 
 - Anfranserai Morais Dias
