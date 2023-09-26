@@ -36,7 +36,7 @@ gh repo clone nailasuely/IOInterfacesProblem1
   - [UART Receiver](#uart-receiver)
   - [DHT11](#dht11)
   - [Sensor 01](#sensor-01)
-  - [Máquina Geral](#máquina-geral)
+  - [Máquina de Estados Geral](#máquina-de-estado-geral)
   - [Contadores](#contadores)
   - [Desenvolvimento em C](#desenvolvimento-em-c)
 - [Testes](#testes)
@@ -204,6 +204,22 @@ A principal entrada deste módulo é request, que indica o tipo de informação 
 Quando o sistema principal emite um pedido de dados, o módulo responde ativando o sensor, redefinindo-o para garantir que os dados anteriores sejam apagados e aguardando um tempo específico antes de passar para o próximo estado. Isso é feito para permitir que o sensor esteja pronto para fornecer dados atualizados.
 Assim que os dados são lidos com sucesso do sensor DHT11, o módulo os processa de acordo com o tipo de informação solicitada. Ele separa os bits relevantes dos dados e os coloca nos locais apropriados no registrador information. Além disso, ele sinaliza que a leitura foi concluída definindo info_fineshed como 1.
 Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por meio do sinal error_sensor. O módulo então define information de acordo para indicar a situação do sensor.
+
+<div align="center">
+	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/mef_sensor.png" alt="Sensor"width="720" height="533">
+	 <p>
+      	Síntese do uso de Pinos e LEs
+    </p>
+    </div>	
+
+### Máquina de Estados Geral
+
+<div align="center">
+	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/mef_geral.png" alt="Sensor">
+	 <p>
+      	Síntese do uso de Pinos e LEs
+    </p>
+    </div>
 
 ![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
 
