@@ -8,7 +8,13 @@ module DHT11_Made_in_china(
 	output  reg [39:0]	data     ,
 	output  			error					,//É 1 quando o grau dos dados está errado.
 	output  			done//Atualizações de dados após concluir uma conversão
+	//output [39:0]dado
 );
+
+
+	//wire [39:0] dado;
+	//assign dado = data;
+	
 	wire din, clk;//ler dados
 	reg read_flag;
 	reg dout;
@@ -26,7 +32,10 @@ module DHT11_Made_in_china(
 	
 	generate_clock_1MHZ clock_1MHz (clock, clk);
 
-
+	//COLOCAR LEVEL TO PULSE O RESET
+	
+	
+	
 	assign dat_io = read_flag ? 1'bz : dout;
 	assign din = dat_io;
 	assign done = (state == s10)?1'b1:1'b0;
@@ -219,9 +228,9 @@ module generate_clock_1MHZ(clock, clk);
 
     always @(posedge clock)
         begin
-            if(counter == 6'b110010)
+            if(counter == 6'd50)
                 begin
-					counter = 6'd0;
+							counter = 6'd0;
                     clk <= 1'b1;
                 end
             else
