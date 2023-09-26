@@ -66,6 +66,12 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 
 
 ## Implementação
+ <div align="center">
+        <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/diagrama_geral.png" alt="Diagrama Geral">
+	 <p>
+      	Diagrama Geral
+    </p>
+    </div>
 
 
 
@@ -185,6 +191,14 @@ A principal entrada deste módulo é request, que indica o tipo de informação 
 Quando o sistema principal emite um pedido de dados, o módulo responde ativando o sensor, redefinindo-o para garantir que os dados anteriores sejam apagados e aguardando um tempo específico antes de passar para o próximo estado. Isso é feito para permitir que o sensor esteja pronto para fornecer dados atualizados.
 Assim que os dados são lidos com sucesso do sensor DHT11, o módulo os processa de acordo com o tipo de informação solicitada. Ele separa os bits relevantes dos dados e os coloca nos locais apropriados no registrador information. Além disso, ele sinaliza que a leitura foi concluída definindo info_fineshed como 1.
 Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por meio do sinal error_sensor. O módulo então define information de acordo para indicar a situação do sensor.
+
+## Uso de Pinos e LEs
+ <div align="center">
+        <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/statistics.png" alt="Síntese">
+	 <p>
+      	Síntese do uso de Pinos e LEs
+    </p>
+    </div>
 
 
 
