@@ -43,15 +43,17 @@ int main(){
 		if (fd != 0) {
             if (len < 0) {
                 perror("\nOcorreu um erro na leitura de dados");
-            } else if (len == 0) {
-                printf("\nNenhum dado lido\n");
+            } else if (len == 0){
+            	printf("\n──────────────────────────────────────────────────────\n");
+                printf("\nEsperando dado\n");
+                printf("\n──────────────────────────────────────────────────────\n");
             } else {
                 if (text[0] == 0x1F) {
                     printf("\nO sensor está com problema\n");
                 } else if (text[0] == 0x07) {
                     printf("\nO sensor está funcionando corretamente\n");
                 } else if (text[0] == 0x08) {
-                    printf("\nMedida de umidade: ");
+                    printf("\nMedida de umidade\n");
                     printf("Quantidade de bytes recebidos: %d \n", len);
                     // Itera sobre os bytes e imprime apenas os bytes do código de protocolo e da temperatura
                     for (int i = 0; i < len; i++) {
@@ -66,7 +68,7 @@ int main(){
                         }
                     }
                 } else if (text[0] == 0x09) {
-                    printf("\nMedida de temperatura: ");
+                    printf("\nMedida de temperatura\n");
                     for (int i = 0; i < len; i++) {
                         // Código de protocolo
                         if (i == 0) {
@@ -113,7 +115,7 @@ int main(){
                 } else if (text[0] == 0xFB) {
                     printf("\nComando inválido\n"); 
                 } else {
-                    printf("\n\nErro no formato de dado recebido\n");
+                    printf("\n");
                 }
             }}
         

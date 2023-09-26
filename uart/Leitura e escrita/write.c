@@ -14,8 +14,8 @@ void tabela(){
             "│    3    │   Medida de umidade.                             │\n"
             "│    4    │   Ativa sensoriamento contínuo de umidade.       │\n"
             "│    5    │   Ativa sensoriamento contínuo de temperatura.   │\n"
-            "│    6    │   Desativa sensoriamento contínuo de temperatura.│\n"
-            "│    7    │   Desativa sensoriamento contínuo de umidade.    │\n"
+            "│    6    │   Desativa sensoriamento contínuo de umidade.    │\n"
+            "│    7    │   Desativa sensoriamento contínuo de temperatura.│\n"
             "│    0    │   Sair.                                          │\n"
             "└─────────┴──────────────────────────────────────────────────┘\n");
     printf("Escolha uma das opções: ");

@@ -13,10 +13,9 @@ void tabela(){
             "│    3    │   Medida de umidade.                             │\n"
             "│    4    │   Ativa sensoriamento contínuo de umidade.       │\n"
             "│    5    │   Ativa sensoriamento contínuo de temperatura.   │\n"
-            "│    6    │   Desativa sensoriamento contínuo de temperatura.│\n"
-            "│    7    │   Desativa sensoriamento contínuo de umidade.    │\n"
-            "│    8    │   Executar codigo antigo                         │\n"
-            "│    8    │   0 - Sair.                                      │\n"
+            "│    6    │   Desativa sensoriamento contínuo de umidade     │\n"
+            "│    7    │   Desativa sensoriamento contínuo de temperatura.│\n"
+            "│    0    │   Sair.                                          │\n"
             "└─────────┴──────────────────────────────────────────────────┘\n");
     printf("Escolha uma das opções: ");
 }
@@ -118,7 +117,7 @@ int main()
             strcpy(text, codigoRequisicao);
             len = strlen(text);
             len = write(fd, text, len);
-            printf("Você enviou %d bytes para UART. \n", len);
+            printf("\n Você enviou %d bytes para UART. \n", len);
             printf("Aguarde 7 segundos\n");
 
             sleep(7);
@@ -127,30 +126,32 @@ int main()
             memset(text, 0, 255);
             len = read(fd, text, 255);
 
-            printf("Quantidade de bytes recebidos: %d \n", len);
-
-            for (int i = 0; i < len; i++) {
-            // Código de protocolo
-            if (i == 0) {
-                printf("0x%02x - Código de protocolo\n", text[i]);
-            }
-
-            // Temperatura
-            if (i == 2) {
-                 printf("0x%02x - Temperatura\n", text[i]);
-            }
-            }
+            printf("\n──────────────────────── Medida continua ────────────────────────");
+                   printf("\n\n");
+		    // Itera sobre os bytes e imprime apenas os bytes do código de protocolo e da temperatura
+		    printf("\n");
+		    for (int i = 0; i < len; i++) {
+	         	// Código de protocolo
+			if (i == 0) {
+		        	printf("0x%02x - Código de protocolo\n", text[i]);
+			  }
+			// Temperatura
+			if (i == 2) {
+		           printf("%d - Temperatura ou Umidade  \n", text[i]);;
+			 }
+			}
+	    printf("\n────────────────────────────────────────────────────────────────");
+			
             close(fd);
             sleep(6); // Intervalo entre as leituras contínuas
 
             // Verifica se o usuário pressionou enter
-            printf("Pressione enter para parar leitura continua\n");
+            //printf("\nPressione enter para parar leitura continua\n");
             char caractere = getchar();
-            if (caractere == 10) {
+            while(caractere == 10) {
                 leituraContinua = 0;
                 comandoSelecionado = 0 ;
-                printf("\nQUANDO AQUI PARAR VOCE ESCOLHE NO MENU PARA PARAR A LEITURA CONTINUA INICIADA(6 U 7)\n");
-                break;
+            }
             }
         }
     }
@@ -171,8 +172,6 @@ int main()
         options.c_iflag = IGNPAR;
         options.c_oflag = 0;
         options.c_lflag = 0;
-
-
         tcflush(fd, TCIFLUSH);
         tcsetattr(fd, TCSANOW, &options);
 
@@ -201,11 +200,32 @@ int main()
                 } else if (text[0] == 0x07) {
                     printf("\nO sensor está funcionando corretamente\n");
                 } else if (text[0] == 0x08) {
-                    printf("\nMedida de umidade: ");
-                    printf("%s\n", text);
+                    printf("\n──────────────────────── Medida de umidade ────────────────────────");
+                    printf("\n");
+                    for (int i = 0; i < len; i++) {
+                        // Código de protocolo
+                        if (i == 0) {
+                                printf("0x%02x - Código de protocolo\n", text[i]);
+                          }
+                        // Temperatura
+                        if (i == 2) {
+                               printf("%d - Temperatura ou Umidade  \n", text[i]);;
+                         }
+                    }
+                    printf("\n");
                 } else if (text[0] == 0x09) {
-                    printf("\nMedida de temperatura: ");
-                    printf("%s\n", text);
+                    printf("\n──────────────────────── Medida de temperatura ──────────────────────── ");
+                    printf("\n\n");
+                    for (int i = 0; i < len; i++) {
+                        // Código de protocolo
+                        if (i == 0) {
+                            printf("0x%02x - Código de protocolo\n", text[i]);
+                      }
+                        // Temperatura
+                        if (i == 2) {
+                           printf("%d - Temperatura ou Umidade  \n", text[i]);;
+                     }
+			    }
                 } else if (text[0] == 0x0A) {
                     printf("\nConfirmação de desativação de sensoriamento contínuo de temperatura\n");
                 } else if (text[0] == 0x0B) {
@@ -226,26 +246,7 @@ int main()
                     printf("\n\nErro no formato de dado recebido\n");
                 }
             }}
-        
-        // --------------------------------------------------------------------------------------------------
-        
-        
-        printf("Quantidade de bytes recebidos: %d \n", len);
-        // Itera sobre os bytes e imprime apenas os bytes do código de protocolo e da temperatura
-        for (int i = 0; i < len; i++) {
-            // Código de protocolo
-            if (i == 0) {
-                printf("0x%02x - Código de protocolo\n", text[i]);
-            }
-
-            // Temperatura
-            if (i == 2) {
-                 printf("Temperatura ou Umidade: %d \n", text[i]);;
-            }
         }
-        }
-        //----------------------------------------------------------------------------------
-		
     }while(comandoSelecionado != 0);
     close(uart_fd);
     return 0;
