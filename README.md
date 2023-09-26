@@ -15,7 +15,7 @@
 
 </div>
 
-> Este projeto não é profissional e tem como objetivo armazenar o conteúdo da disciplina Módulo Integrador Sistemas Digitais.
+> Est tem como objetivo armazenar o conteúdo da disciplina Módulo Integrador Sistemas Digitais.
 
 
 
@@ -36,9 +36,12 @@ gh repo clone nailasuely/IOInterfacesProblem1
   - [UART Receiver](#uart-receiver)
   - [DHT11](#dht11)
   - [Sensor 01](#sensor-01)
-  - [Máquina de Estados Geral](#máquina-de-estado-geral)
+  - [Máquina de Estados Geral](#máquina-de-estados-geral)
   - [Contadores](#contadores)
+  - [Selecionando Endereço e Requisição](#selecionando-endereço-e-requisição)
+  - [Recebendo Dados do Sensor](#recebendo-dados-do-sensor)
   - [Desenvolvimento em C](#desenvolvimento-em-c)
+- [Executando o Projeto](#executando-o-projeto)
 - [Testes](#testes)
 - [Uso de Pinos e LEs](#uso-de-pinos-e-les)
 - [Conclusão](#conclusão) 
@@ -78,6 +81,8 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 
 ### Protocolo
 
+- O Protocolo de Requisição é utilizado para o envio de comandos e solicitações específicas para a interface do sistema. Cada código listado na tabela abaixo representa um comando que pode ser enviado para FPGA, permitindo o controle e obtenção de informações.
+
  <div align="center">
 	 
 | Código                                                                            | Descrição do comando                                                                                                                                                                 |
@@ -94,21 +99,22 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
     </p>
 </div>
 
+- O Protocolo de Resposta descreve as respostas que o dispositivo fornece em resposta aos comandos enviados pelo protocolo de requisição. Cada código na tabela abaixo representa uma resposta correspondente ao comando enviado, auxiliando na interpretação das informações retornadas pelo sistema.
 
 <div align="center">
 	
 | Código                                                                            | Descrição do comando                                                                                                                                                               |
 | :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0x1F | Sensor com problema                                                                                                                             |
+| 0x1F             | Sensor com problema                                                                                                                             |
 | 0x07             | Sensor funcionando normalmente 
-| 0x08        | Medida de umidade       |
-| 0x09        | Medida de temperatura     |
-| 0x0A        | Confirmação de desativação de sensoriamento contínuo de temperatura      |
-| 0x0B        | Confirmação de desativação de sensoriamento contínuo de umidade     |
-| 0xF0        | Medida de temperatura continua     |
-| 0xFE         |Medida de umidade continua    |
-|0xFC        | Byte secundario para complementar o byte primario     |
-|0xFB        | Comando inválido      |
+| 0x08             | Medida de umidade       |
+| 0x09             | Medida de temperatura     |
+| 0x0A             | Confirmação de desativação de sensoriamento contínuo de temperatura      |
+| 0x0B             | Confirmação de desativação de sensoriamento contínuo de umidade     |
+| 0xF0             | Medida de temperatura continua     |
+| 0xFE             |Medida de umidade continua    |
+|0xFC              | Byte secundario para complementar o byte primario     |
+|0xFB              | Comando inválido      |
 
 <p>
       Protocolo de Resposta
@@ -213,6 +219,22 @@ Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por m
     </div>	
 
 ### Máquina de Estados Geral
+Um dos principais módulos do problema, a "general_MEF", tem função de controle geral do sistema, no que lhe confere a armazenar a informação recebida pela porta serial, realizar checagem desse protocolo, para analise se é correto ou um comando invalido, realizar chamada para ativar a máquina que faz interface para lidar com o sensor, a "Sensor_01_MEF", além disso ele faz o envio dos 2 bytes, 1 sendo o protocolo de resposta, e o outro o dado requisitado, ou um byte com informação nula, somente para preenchimento do segundo espaço. 
+Para que possa funcionar, esta máquina de estados finitos, possui 6 estados, sendo eles: idle, check_code, invalid_code, reading, information, continuous. Para determinação do estado atual, é utilizado o registrador choose_case, em que vai guardando os códigos dos estados e permitindo o funcionamento. Segue uma explicação de cada estado:
+
+- **Idle:**
+Estado de espera, em que a máquina permanece ate receber um sinal indicando para iniciar. Nesse estado alguns registradores são setados com o valor padrão, como o info_sensor_made (indicar se a informação do segundo byte provém do sensor), continuous_mode(indicar se o modo contínuo está ativo), além de desativar os dißplays de led, junto aos ativadores dos contadores. 
+- **Check_code:**
+Estado em que verifica se o comando recebido está çorreto ao verificar a variável sentada por um decodificador, o code_verify. A depender do protocolo, ele pode ir para o estado de comando invalido, ou prosseguir para o estado de reading. Vale lembrar que nesse estado o display de 7 segmentos da esquerda acende para informar que chegou o comando. 
+- **Invalid_code:**
+Esse estado serve para enviar informação de que o comando recebido é invalido. Ele faz o envio do primeiro byte, que corresponde ao protocolo de resposta, e prossegue para o estado information para realizar o envio do segundo byte.
+- **Reading:**
+O maior estado da máquina de estados, e que é responsável por ativar a máquina de interface do sensor, para que os dados provindos dele sejam capturados. Esse estado realiza a verificação para analisar qual requisição está sendo feita, e assim poder mandar para o computador o protocolo correto, junto com a informação correta provinda do sensor, se for o caso. Além disso, ele faz a seleção para ver qual dos 32 possíveis sensores será ativado. Tanto para o endereço dos sensores, como para o protocolo de requisição, há verificação para se, um dos não estiver correto, irá para o estado de código inválido, o invalid_code. Ainda nesse estado é enviado o código do protocolo de resposta adequado a requisição, ativada a máquina que faz interface com o sensor, e por fim vai ao estado information, ou para o continuous_letter. O primeiro desses, serve  para envio do segundo byte  feito pelo sensor, mas com o continuous desabilitado, caso esteja habilitado, ele vai para o continuous_lstter realizar essa operação e volta para o estado information a fim de esperar o temporizador/contador atingir a contagem dele de 10 segundos, e retornar ao estado de reading, a fim de continuar a rotina do modo contínuo.
+- **Information**
+Esse estado tem como base o envio do segundo byte para o computador através da porta serial. Antes disso ocorrer, ele realiza algumas verificações para saber qual informação ele irá enviar,  como: se a informação do segundo byte é produzida pelo sensor ou não e  se o modo contínuo está ativo ou não. Em caso da informação não ser setada pelo sensor, é enviado um byte já pré-definido, e no caso do contínuo está ativo, esse estado é mantido, até o contador chegar ao alvo de contagem, que resulta no tempo de 10 segundos. Vale ressaltar que por conta dos outros temporizadores contidos no código, o modo contínuo tem atualizações a cada  20 segundos, aproximadamente. Para envio da informação, quando ela é referente ao sensor, há um temporizador de 4 segundos, que manda a informação após passado esse tempo, a fim de garantir que o sensor respondeu.
+- **Continuous_letter**
+Tal estado serve para envio do segundo byte, quando o modo contínuo está ativo. Logo ele permite que no estado de reading seja enviado o byte informando o protocolo de resposta, e ao chegar nesse estado enviar a informação do sensor. Nesse momento, também há um temporizador de 4 segundos, assim como no estado information. Seu próximo estado, é o information para que fique lá até o tempo de ser necessário enviar novamente a informação de modo contínuo.
+
 
 <div align="center">
 	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/mef_geral.png" alt="Sensor">
@@ -220,6 +242,47 @@ Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por m
       	Síntese do uso de Pinos e LEs
     </p>
     </div>
+
+### Contadores
+O projeto contém alguns contadores, que exercem a função de temporizador, na medida que algumas funções esperam a contagem terminar para poder realizar outras, similar a função sleep() presente na linguagem C. Ressalta-se ainda que eles funcionam com um sinal de ativação, para iniciar a contagem somente quando necessário, assim como ao terminar a contagem enviam um sinal indicando isso. Excetua-se do sinal de ativação apenas o generate_clock1Mhz, já que este precisa estar o tempo todo ativo, por funcionar como um divisor de clock. Dentre eles, há:
+
+- **Timer_pulso_reset:**
+Este serve para deixar o sinal de reset enviado para o módulo DHT11_Made_in_china, ativo por um tempo para questão de sincronização, e captura desse sinal, para que esta máquina possa ser ativada, e começar receber os dados do sensor.
+- **Timer_muda_state:**
+Com o intuito de indicar a temporização para efetuar a mudança de estado, quando usado no módulo sensor_01_MEF, e quando no módulo general_MEF realiza a operação de esperar para poder enviar o segundo byte, garantindo que houve leitura e captura dos dados do sensor.
+- **Timer_continuous:**
+Tem a função de contagem até o valor de 500 mil, o que com clock de 50 MHz, gera um tempo de 10 segundos, o qual é o intervalo para atualizar o dado do modo contínuo. 
+- **Gerador_clock_1MHz:** 
+Pensando no funcionamento da máquina do DHT11, em que trabalha a 1 MHz, e em contrapartida a placa possui um clock base de 50MHz. Em resolução, foi criado este contador que vai até o valor 50, decimal, e ao atingir o valor emite um valor 1, e logo após o contador ir a 0, o valor emitido volta a 0, possibilitando obter um sinal de clock de 1 MHz como necessário. 
+
+### Selecionando Endereço e Requisição
+
+A seleção de endereço e armazenamento é essencial para o funcionamento do projeto, visto que sem esse armazenamento a primeira informação sempre seria perdida, já que seria sobrescrevida pela segunda informação. Para que esta etapa funcione, há uma estrutura always a qual atualiza com o pulso de clock da placa, um registrador utilizado como seletor, e por fim o sinal de rx_done, que informa quando a informação foi completamente recebida.
+Usando um conjunto de if e else, tem-se no primeiro a verificação se a informação foi recebida, e o seletor está com o valor 0, nesse caso está tratando do protocolo de requisição, e entao salva essa informação no primeiro buffer, chamado protocol_01, e muda o valor do seletor para 1, ao fazer isso, quando receber a próxima informação, esta será salva no segundo buffer, que armazena o endereço do sensor, esse buffer chamado de protocol_02.
+
+<div align="center">
+	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/MAP003.png" alt="Informação gerada pelo sensor mostrada pelo osciloscópio."width="800" height="480">
+	 <p>
+      	Informação gerada pelo sensor e exibida pelo osciloscópio
+    </p>
+    </div>
+
+
+### Recebendo Dados do Sensor
+
+O recebimento de dados provenientes do sensor ocorre por meio do módulo DHT11_Made_in_china, o qual contém temporizadores para poder tanto mandar o pulso de ativação do sensor, que leva o tempo de aproximadamente 18ms a 20ms, tanto como receber os 40 bits que o sensor irá enviar e identificar qual tem o valor 0 ou 1, para compor a informação. Junto a este módulo há outro que faz interface, o sensor_01_MEF,  para que a comunicação entre a general_MEF e o DHT11_Made_in_china, ocorra sem maiores problemas, do formato da informação. Dessa forma a general_MEF envia um código de requisição para modulo sensor_01_MEF, este por sua vez envia o sinal para ativar o módulo DHT11_Made_in_china, após os dados recuperados do sensor, eles são enviados para o módulo sensor_01_MEF, e este seleciona dentre os 40 bits, apenas 8, escolhidos a depender da requisição, seja os 8 primeiros para …, ou o terceiro bloco de 8 bits para o …, ou no caso de pedida a situação do sensor, verifica-se o sinal de error enviado pelo DHT11_Made_in_china. Por fim, este byte é enviado para a general_MEF e enviado para o computador a informação.
+
+### Desenvolvimento em C
+Para possibilitar a funcionalidade contínua e manual do sistema, dois códigos em C foram utilizados de maneira separada: um para a leitura e outro para a escrita dos dados via UART.
+
+- Write
+
+O código descrito em C foi desenvolvido com o propósito de estabelecer comunicação entre um sistema Linux presente nos computadores do Laboratório de Eletrônica Digital e Sistemas(LEDS) e uma FPGA, permitindo a interação com um sensor por meio de transmissão UART. Utilizando a biblioteca "termios", ele configura a porta serial ("/dev/ttyS0") com uma taxa de baud de 9600 e parâmetros de comunicação adequados. O programa apresenta um menu interativo ao usuário, permitindo a escolha de diferentes comandos, como a obtenção da situação atual do sensor, medições de temperatura e umidade, além de ativar ou desativar o sensoriamento contínuo de temperatura ou umidade. Após a seleção do comando, o código envia o código correspondente para a FPGA via UART e aguarda alguns segundos para a resposta.
+
+- Read
+
+Esse código é o responsável para receber os dados. Quando dados são recebidos, o programa interpreta os primeiros bytes para determinar qual é o protocolo recebido e exibir para o usuário a medida de temperatura ou umidade. O código fornece uma interface para processar os dados recebidos da FPGA via UART, permitindo a leitura e interpretação das informações do sensor em tempo real. O programa opera em um loop contínuo, lendo e interpretando dados em determinado intervalo.
+
 
 ![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
 
@@ -239,7 +302,11 @@ O projeto é compatível com o kit de desenvolvimento Mercurio IV, em conjunto c
 Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, baixar os arquivos disponíveis neste repositório e baixar algum software que permita configurar e montar as entradas e saídas da placa Mercurio IV, a exemplo o Quartus. Além disso, é essencial contar com um computador para controlar o sensor que estará conectado à placa. Uma vez que todos os materiais estejam disponíveis, será necessário configurar as entradas e saídas da placa, como os pinos da comunicação serial e da comunicação com o sensor. Por fim, basta executar o código C no terminal e fazer as solicitações desejadas. 
 
 ![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
- 
+
+## Testes
+
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+
 
 ## Conclusão 
 O objetivo principal deste trabalho era compreender a integração entre FPGA e códigos em linguagem C para desenvolver um sistema computacional, ao mesmo tempo em que se aprofundaram os conhecimentos sobre comunicação serial. Com a conclusão do projeto é verdadeiro afirmar que esse objetivo foi plenamente alcançado, visto que o projeto conseguiu estabelecer uma comunicação eficaz entre o computador e a placa, atendendo a todos os requisitos estabelecidos. 
