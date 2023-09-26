@@ -15,7 +15,7 @@
 
 </div>
 
-> Est tem como objetivo armazenar o conteúdo da disciplina Módulo Integrador Sistemas Digitais.
+> Esse é um projeto da disciplina TEC 499 - Módulo Integrador Sistemas Digitais, no qual ocorre a criação de um projeto de um Sensor Digital em FPGA utilizando Comunicação Serial.
 
 
 
