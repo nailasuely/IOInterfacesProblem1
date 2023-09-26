@@ -26,23 +26,7 @@
 gh repo clone nailasuely/IOInterfacesProblem1
 ```
 <div align="left">
-  
-## Apresentação
-Nos últimos anos, temos observado um aumento notável na presença de objetos inteligentes que incorporam a capacidade de coletar dados, processá-los e estabelecer comunicação. Esse fenômeno está diretamente relacionado à ascensão da Internet das Coisas (IoT), um conceito que conecta esses objetos à rede global de computadores, possibilitando a interação entre usuários e dispositivos. A IoT abre as portas para uma variedade de aplicações inovadoras, que vão desde cidades inteligentes até soluções de saúde e automação de ambientes. [1]
-
-Nossa equipe foi contratada para desenvolver um protótipo de sistema digital voltado para a gestão de ambientes por meio da IoT. O projeto será implementado de maneira incremental, e a primeira etapa abrange a criação de um protótipo que integra o sensor DHT11 que é  capaz de medir a temperatura e a umidade do ambiente. Este sistema será projetado com modularidade, possibilitando a realização de substituições e aprimoramentos em versões posteriores.
-
-Esse protótipo é implementado utilizando a interface de comunicação serial (UART) que permite a recepção, interpretação, execução e resposta de comandos enviados.
-
-## Requisitos
-- A implementação do código deve ser realizada em linguagem C.
-- Integração de Múltiplos Sensores
-- A Iniciação da Comunicação deve acontecer por meio do computador, exceto quando o monitoramento contínuo for necessário.
-- Deverá ser utilizada a interface de comunicação serial (UART)
-- A comunicação entre o computador e a FPGA deve seguir um protocolo definido, incluindo comandos de requisição e respostas de 2 bytes, consistindo de comando e endereço do sensor.
-
-
-
+	
 ## Sumário
 - [Apresentação](#apresentação)
 - [Requisitos](#requisitos)
@@ -52,7 +36,7 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
   - [UART Receiver](#uart-receiver)
   - [DHT11](#dht11)
   - [Sensor 01](#sensor-01)
-  - [Máquina Geral](#máquina-geral)
+  - [Máquina de Estados Geral](#máquina-de-estado-geral)
   - [Contadores](#contadores)
   - [Desenvolvimento em C](#desenvolvimento-em-c)
 - [Testes](#testes)
@@ -63,13 +47,39 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 - [Referências](#referências)
 
 
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+## Apresentação
+Nos últimos anos, temos observado um aumento notável na presença de objetos inteligentes que incorporam a capacidade de coletar dados, processá-los e estabelecer comunicação. Esse fenômeno está diretamente relacionado à ascensão da Internet das Coisas (IoT), um conceito que conecta esses objetos à rede global de computadores, possibilitando a interação entre usuários e dispositivos. A IoT abre as portas para uma variedade de aplicações inovadoras, que vão desde cidades inteligentes até soluções de saúde e automação de ambientes. [1]
 
+Nossa equipe foi contratada para desenvolver um protótipo de sistema digital voltado para a gestão de ambientes por meio da IoT. O projeto será implementado de maneira incremental, e a primeira etapa abrange a criação de um protótipo que integra o sensor DHT11 que é  capaz de medir a temperatura e a umidade do ambiente. Este sistema será projetado com modularidade, possibilitando a realização de substituições e aprimoramentos em versões posteriores.
 
+Esse protótipo é implementado utilizando a interface de comunicação serial (UART) que permite a recepção, interpretação, execução e resposta de comandos enviados.
+
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+ 
+## Requisitos
+- A implementação do código deve ser realizada em linguagem C.
+- Integração de Múltiplos Sensores
+- A Iniciação da Comunicação deve acontecer por meio do computador, exceto quando o monitoramento contínuo for necessário.
+- Deverá ser utilizada a interface de comunicação serial (UART)
+- A comunicação entre o computador e a FPGA deve seguir um protocolo definido, incluindo comandos de requisição e respostas de 2 bytes, consistindo de comando e endereço do sensor.
+
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+ 
 ## Implementação
+ <div align="center">
+        <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/diagrama_geral.png" alt="Diagrama Geral">
+	 <p>
+      	Diagrama Geral
+    </p>
+    </div>
 
 
 
 ### Protocolo
+
+ <div align="center">
+	 
 | Código                                                                            | Descrição do comando                                                                                                                                                                 |
 | :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |  0x00        | Solicita a situação atual do sensor     |
@@ -78,9 +88,15 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 | 0x03                  | Ativa sensoriamento contínuo de temperatura                                                                                                        |
 | 0x04                  | Ativa sensoriamento contínuo de umidade                                                                                                                                                  |
 | 0x05 | Desativa sensoriamento contínuo de temperatura                                                                                                                             |
-| 0x06              | Desativa sensoriamento contínuo de umidade                                                                                                              |
+| 0x06              | Desativa sensoriamento contínuo de umidade                                                                          
+<p>
+      	Protocolo de Requisição
+    </p>
+</div>
 
 
+<div align="center">
+	
 | Código                                                                            | Descrição do comando                                                                                                                                                               |
 | :------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 0x1F | Sensor com problema                                                                                                                             |
@@ -93,8 +109,11 @@ Esse protótipo é implementado utilizando a interface de comunicação serial (
 | 0xFE         |Medida de umidade continua    |
 |0xFC        | Byte secundario para complementar o byte primario     |
 |0xFB        | Comando inválido      |
-                     
 
+<p>
+      Protocolo de Resposta
+    </p>
+</div>
 
 ### UART Transmitter
 - Clk (Clock): Esta é uma entrada que representa o sinal de clock do sistema.
@@ -186,19 +205,50 @@ Quando o sistema principal emite um pedido de dados, o módulo responde ativando
 Assim que os dados são lidos com sucesso do sensor DHT11, o módulo os processa de acordo com o tipo de informação solicitada. Ele separa os bits relevantes dos dados e os coloca nos locais apropriados no registrador information. Além disso, ele sinaliza que a leitura foi concluída definindo info_fineshed como 1.
 Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por meio do sinal error_sensor. O módulo então define information de acordo para indicar a situação do sensor.
 
+<div align="center">
+	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/mef_sensor.png" alt="Sensor"width="720" height="533">
+	 <p>
+      	Síntese do uso de Pinos e LEs
+    </p>
+    </div>	
 
+### Máquina de Estados Geral
+
+<div align="center">
+	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/mef_geral.png" alt="Sensor">
+	 <p>
+      	Síntese do uso de Pinos e LEs
+    </p>
+    </div>
+
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+
+## Uso de Pinos e LEs
+ <div align="center">
+        <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/statistics.png" alt="Síntese">
+	 <p>
+      	Síntese do uso de Pinos e LEs
+    </p>
+    </div>
+    
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+ 
+## Executando o projeto
+O projeto é compatível com o kit de desenvolvimento Mercurio IV, em conjunto com o sensor DHT11. O módulo do programa em C pode ser adaptado para o sistema operacional Windows, mas foi inicialmente desenvolvido para o ambiente Linux. Como resultado, existem funcionalidades projetadas especialmente para o Linux.
+
+Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, baixar os arquivos disponíveis neste repositório e baixar algum software que permita configurar e montar as entradas e saídas da placa Mercurio IV, a exemplo o Quartus. Além disso, é essencial contar com um computador para controlar o sensor que estará conectado à placa. Uma vez que todos os materiais estejam disponíveis, será necessário configurar as entradas e saídas da placa, como os pinos da comunicação serial e da comunicação com o sensor. Por fim, basta executar o código C no terminal e fazer as solicitações desejadas. 
+
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+ 
 
 ## Conclusão 
 O objetivo principal deste trabalho era compreender a integração entre FPGA e códigos em linguagem C para desenvolver um sistema computacional, ao mesmo tempo em que se aprofundaram os conhecimentos sobre comunicação serial. Com a conclusão do projeto é verdadeiro afirmar que esse objetivo foi plenamente alcançado, visto que o projeto conseguiu estabelecer uma comunicação eficaz entre o computador e a placa, atendendo a todos os requisitos estabelecidos. 
 
 Em relação à execução do projeto, a maioria das ferramentas utilizadas já eram familiares aos discentes, incluindo o software Quartus e o osciloscópio. No entanto, nesse projeto, a novidade incluiu a utilização da placa Mercurio IV e o sensor DHT11. As principais dificuldades associadas ao projeto surgiram em decorrência do uso das placas, por conta da quantidade limitada, e a imperícia dos alunos com relação aos cuidados no uso do DHT11. Com exceção desses desafios, o projeto transcorreu sem intercorrências significativas.
 
-## Executando o projeto
-O projeto é compatível com o kit de desenvolvimento Mercurio IV, em conjunto com o sensor DHT11. O módulo do programa em C pode ser adaptado para o sistema operacional Windows, mas foi inicialmente desenvolvido para o ambiente Linux. Como resultado, existem funcionalidades projetadas especialmente para o Linux.
 
-Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, baixar os arquivos disponíveis neste repositório e baixar algum software que permita configurar e montar as entradas e saídas da placa Mercurio IV, a exemplo o Quartus. Além disso, é essencial contar com um computador para controlar o sensor que estará conectado à placa. Uma vez que todos os materiais estejam disponíveis, será necessário configurar as entradas e saídas da placa, como os pinos da comunicação serial e da comunicação com o sensor. Por fim, basta executar o código C no terminal e fazer as solicitações desejadas. 
-
-
+![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
+ 
 ## Tutor 
 - Anfranserai Morais Dias
 
@@ -207,6 +257,8 @@ Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, b
 - [Rhian Pablo](https://github.com/rhianpablo11)
 - [João Gabriel Araujo](https://github.com/joaogabrielaraujo)
 - [Amanda Lima](https://github.com/AmandaLimaB)
+
+
 
 ## Referências 
 
