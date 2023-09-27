@@ -1,0 +1,8 @@
+Warning (10268): Verilog HDL information at DHT11_Made_in_china.v(229): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 229
+Warning (10268): Verilog HDL information at general_MEF.v(108): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 108
+Warning (10268): Verilog HDL information at general_MEF.v(216): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 216
+Warning (10268): Verilog HDL information at sensor_01_MEF.v(84): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v Line: 84
+Warning (10268): Verilog HDL information at sensor_01_MEF.v(229): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v Line: 229
+Warning (10268): Verilog HDL information at timer_continuous.v(10): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/timer_continuous.v Line: 10
+Warning (10268): Verilog HDL information at timer_pulso_mudar_estado.v(8): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/timer_pulso_mudar_estado.v Line: 8
+Warning (10268): Verilog HDL information at uart_tx.v(26): always construct contains both blocking and non-blocking assignments File: /home/aluno/Downloads/rp1/depois_do corrompido/uart_tx.v Line: 26
