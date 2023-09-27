@@ -179,23 +179,23 @@ O módulo DHT11 possui as seguintes entradas e saídas:
   
 O módulo opera como uma máquina de estados finitos para controlar a comunicação com o sensor DHT11 e a aquisição de dados. Ele segue uma sequência de estados (de s1 a s10) para gerenciar a temporização, a leitura de dados e a detecção de erros. Cada estado desempenha um papel específico no processo de aquisição de dados.
 
-- s1 (Idle - Ocioso):É O Estado Inicial.Espera que o sinal start seja detectado para iniciar a aquisição de dados.Se start e din forem ambos altos, transita para o estado s2.Se start não for detectado, o módulo permanece nesse estado.
+- s1 (Ocioso):É O Estado Inicial.Espera que o sinal start seja detectado para iniciar a aquisição de dados.Se start e din forem ambos altos, transita para o estado s2.Se start não for detectado, o módulo permanece nesse estado.
 
-- s2 (Atraso Baixo):Aguarda um período de atraso de nível baixo após a detecção de start.Após um atraso suficiente (aproximadamente 19 ms), transita para o estado s3.Se o período de atraso não for alcançado, permanece nesse estado.
+- s2 (Inicio):Aguarda um período de atraso de nível baixo após a detecção de start.Após um atraso suficiente (aproximadamente 19 ms), transita para o estado s3.Se o período de atraso não for alcançado, permanece nesse estado.
 
-- s3 (Espera Barramento de Dados):Aguarda um período de espera após o atraso de nível baixo para permitir que o sensor DHT11 libere o barramento de dados.Após o período de espera 20 a 40 µs, transita para o estado s4.Se o período de espera não for alcançado, permanece nesse estado.
+- s3 (Envia Alto):Aguarda um período de espera após o atraso de nível baixo para permitir que o sensor DHT11 libere o barramento de dados.Após o período de espera 20, transita para o estado s4.Se o período de espera não for alcançado, permanece nesse estado.
 
-- s4 (Resposta do Barramento):Aguarda a resposta do sensor DHT11 no barramento de dados.Se din for detectado como baixo (indicando a resposta), transita para o estado s5.Se din permanecer alto por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
+- s4 (Espera Baixa):Aguarda a resposta do sensor DHT11 no barramento de dados.Se din for detectado como baixo (indicando a resposta), transita para o estado s5.Se din permanecer alto por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
 
-- s5 (Resposta de Dados do Barramento):Aguarda a confirmação do sensor DHT11 de que está pronto para enviar dados.Se din for detectado como alto, transita para o estado s6.Se din permanecer baixo por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
+- s5 (Espera Alta):Aguarda a confirmação do sensor DHT11 de que está pronto para enviar dados.Se din for detectado como alto, transita para o estado s6.Se din permanecer baixo por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
 
-- s6 (Sinal Inicial de Dados):Aguarda o início do sinal de dados do sensor DHT11.Se din for detectado como baixo, transita para o estado s7.Se din permanecer alto por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
+- s6 (Finaliza Sincronização):Aguarda o início do sinal de dados do sensor DHT11.Se din for detectado como baixo, transita para o estado s7.Se din permanecer alto por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
 
-- s7 (Detectar Início dos Dados):Detecta o início de um bit de dados enviado pelo sensor DHT11.Se din for detectado como alto, transita para o estado s8.Se din permanecer baixo por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
+- s7 (Prepara Leitura):Detecta o início de um bit de dados enviado pelo sensor DHT11.Se din for detectado como alto, transita para o estado s8.Se din permanecer baixo por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
 
-- s8 (Detectar Bit de Dados):Detecta o nível do bit de dados, se din for detectado como baixo, incrementa o contador de bits e armazena o bit de dados no registrador data_buf. Após receber os 40 bits de dados, transita para o estado s9.Se din permanecer alto por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
+- s8 (Começa Leitura):Detecta o nível do bit de dados, se din for detectado como baixo, incrementa o contador de bits e armazena o bit de dados no registrador data_buf. Após receber os 40 bits de dados, transita para o estado s9.Se din permanecer alto por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
 
-- s9 (Bloquear Dados e Aguardar Liberação):Bloqueia os dados lidos e aguarda que o sensor DHT11 libere o barramento de dados.Transfere os dados do registrador data_buf para data.Se din for detectado como alto, transita para o estado s10.Se din permanecer baixo por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
+- s9 (Colhe os Bits de Dados):Bloqueia os dados lidos e aguarda que o sensor DHT11 libere o barramento de dados.Transfere os dados do registrador data_buf para data.Se din for detectado como alto, transita para o estado s10.Se din permanecer baixo por muito tempo (tempo limite), retorna ao estado s1 como uma medida de recuperação.
 
 - s10 (Final da leitura):Marca o final da leitura de dados.Reinicia o estado para s1 e aguarda o próximo ciclo de aquisição de dados.
 
