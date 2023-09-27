@@ -199,6 +199,15 @@ O módulo opera como uma máquina de estados finitos para controlar a comunicaç
 
 - s10 (Final da leitura):Marca o final da leitura de dados.Reinicia o estado para s1 e aguarda o próximo ciclo de aquisição de dados.
 
+  <div align="center">
+	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/DHT11_n%20(1).png" alt="Sensor"">
+	 <p>
+      	Máquina de estados do DHT11.
+    </p>
+    </div>	
+
+
+
 ### Sensor 01
 Este módulo opera em dois estados principais: s_idle (ocioso) e s_receiver_data (recebendo dados). O estado atual é determinado pelo registrador choose_case, que é atualizado em resposta a eventos e entradas.
 
@@ -214,7 +223,7 @@ Se o sensor DHT11 detectar algum erro durante a leitura, ele sinaliza isso por m
 <div align="center">
 	<img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/mef_sensor.png" alt="Sensor"width="720" height="533">
 	 <p>
-      	Síntese do uso de Pinos e LEs
+      	Diagrama de funcionamento para interface do sensor.
     </p>
     </div>	
 
@@ -304,24 +313,34 @@ Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, b
 ![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
 
 ## Testes
+
+- **Teste de temperatura:** Foi pedido ao sistema que fornecesse a temperatura atual, e a resposta do sistema foi uma confirmação da solicitação, 0x09, acompanhada da temperatura atual.
+  
  <div align="center">
 	 <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-29-08.png" alt="Síntese">
 	 <p>
       	Teste para medida de temperatura.
     </p>
 </div>
+
+- **Teste de umidade:** Foi pedido ao sistema que fornecesse a umidade atual, e a resposta do sistema foi uma confirmação da solicitação, 0x08, acompanhada da temperatura atual.
 <div align="center">
      <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-30-35.png" alt="Síntese">
 	 <p>
       	Teste para medida de umidade.
     </p>
 </div>
+
+- **Teste de sensoriamento de umidade contínua:** O exemplo ilustra o funcionamento do sensoriamento contínuo, onde o sistema responde com uma confirmação da solicitação, 0xFE, e a temperatura a cada intervalo de 20 segundos.
+
 <div align="center">
     <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-33-17.png" alt="Síntese">
 	 <p>
       	Teste para sensoriamento de umidade contínua.
     </p>
 </div>
+
+- **Teste para desativar o sensoriamento contínuo:** O exemplo demonstra como o sistema reage quando o sensoriamento contínuo é desativado, fornecendo uma confirmação do desligamento do sensoriamento contínuo.
 <div align="center">
     <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-31-54.png" alt="Síntese">
 	 <p>
@@ -354,6 +373,7 @@ Em relação à execução do projeto, a maioria das ferramentas utilizadas já 
 ## Referências 
 
 > - [1] Santos, B. P., Silva, L. A., Celes, C. S. F. S., Borges, J. B., Neto, B. S. P., Vieira, M. A. M., ... & Loureiro, A. (2016). Internet das coisas: da teoria à prática. Minicursos SBRC-Simpósio Brasileiro de Redes de Computadores e Sistemas Distribuıdos, 31, 16.
+> - Tocci, R. J., Widmer, N. S., & Moss, G. L. (2010). Sistemas digitais. Pearson Educación.
 
 
 
