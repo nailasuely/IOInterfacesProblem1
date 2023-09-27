@@ -116,6 +116,7 @@ module sensor_01_MEF(clock,  request, dht_data, information, info_fineshed);
                             begin
                                 enable_sensor = 1'b0;
                                 rst_sensor <= 1'b0;
+										  information <= 8'd0;
 										  //ESTA SO MANTENDO O VALOR DO QUE JA RECEBEU
 										  info_fineshed = 1'b1; //informar que ainda não foi completada a leitura do DHT11
 										  //led = 1'b1;
@@ -282,4 +283,3 @@ module timer_pulso_mudar_estado (clock, activate, next_state);
 endmodule 
 
 */
-

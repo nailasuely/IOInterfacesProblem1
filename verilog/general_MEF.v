@@ -153,7 +153,7 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 			8'b00110011 : verify_code = 1'b1; //0x03
 			8'b00110100 : verify_code = 1'b1; //0x04
 			8'b00110101 : verify_code = 1'b1; //0x05
-			8'b00110111 : verify_code = 1'b1; //0x06
+			8'b00110110 : verify_code = 1'b1; //0x06
 			default : verify_code = 1'b0; //caso padrão, caso nao seja nenhum dos codigos validos, a saida é falsa
 		endcase
 	end
@@ -233,11 +233,15 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 								active_tx = 1'b0; //desativa a uart TX
 								seven_segmentos1 = 7'b0000000; //apagar o display de 7 segmentos 
 								seven_segmentos0 = 7'b0000000; //apagar o display de 7 segmentos
+								//info_send <= 8'd0;
 								choose_case <=s_check_code; //vai para o estado verificar se o protocolo recebido foi coerente
 							end
 						else if(sinal_done == 1'b0) //fica nesse estado enquanto ele nao recebe outros dados
 							begin
 								active_tx = 1'b0; //desativa a uart TX
+								seven_segmentos1 = 7'b0000000; //apagar o display de 7 segmentos 
+								seven_segmentos0 = 7'b0000000; //apagar o display de 7 segmentos
+								
 								active_temp = 1'b0; //desativa o temporizador/contador da mudança de estados
 								continuous_mode <= 1'b0; //indica que o modo continuo nao esta setado, logo nao foi requisitado
 								choose_case <= s_idle; //permanecer no estado de espera enquanto nao foi recebido aquele dado
@@ -309,7 +313,7 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 							begin
 								if(protocol_02 == 8'd0) //conferir se o endereço de sensor recebido, equivale a um sensor registrado
 									begin
-										info_send <= 8'h0x0E; //confirmaçao de desativacao da temp continua
+										info_send <= 8'h0x0A; //confirmaçao de desativacao da temp continua
 										info_sensor_made <= 1'b0; //indicar que a informação nao vira do sensor
 										active_tx = 1'b1; //ativa a tx para envio dos dados
 										if(tx_finished == 1'b1) //quando terminar de mandar a informação muda de estado
@@ -393,7 +397,7 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 								if(protocol_02 == 8'd0) //verificar se o endereço corresponde ao sensor 00
 									begin
 										request <= 2'b00; //request de umidade para ativação na maquina de interface do sensor
-										info_send <= 8'h0xFD; //protocolo de resposta continua de umidade
+										info_send <= 8'h0xFE; //protocolo de resposta continua de umidade
 										active_cont_continuous <= 1'b0; //não ativação do temporizador/contador do modo continuo
 										active_tx <=1'b1; //ativa a UART tx para envio do protocolo de sensoriamento continuo de umidade
 										continuous_mode <= 1'b1; //indica que o modo continuo esta ativo
@@ -419,46 +423,57 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 						else if(protocol_01 == 8'd48) //situação do sensor
 							begin
 								if(protocol_02 == 8'd0) //verificar se o endereço corresponde ao sensor 00
+									
 									begin
 										request = 2'b10; //request para a maquina do sensor verificar se ele esta funcionando normalmente
 										//informação enviada pela maquina do sensor
+										active_temp = 1'b1; //ativa o temporizador para dar tempo capturar e receber as informações do DHT11
 										if(read_fineshed == 1'b0) 
 											begin
+												seg_b = 1'b0;
+												seg_c = 1'b0;
+												seg_a = 1'b1;
+												active_tx <= 1'b0;
 												choose_case <=s_reading;
 											end
 										//quando o sensor terminar de realizar a leitura inicia o procedimento
 										else if(read_fineshed == 1'b1)
 											begin
+												
 												request <= 2'b11;
 												if(info_sensor == 8'b11111111) //informação de que o sensor esta com problema
 													begin
 														info_send <= 8'h0x1F; //sensor com problema
 														active_tx = 1'b1; //ativa o envio de dados pela porta serial
-                                                        if(tx_fineshed == 1'b1)
-                                                            begin
+														info_sensor_made <= 1'b0;
+                                          if(tx_finished == 1'b1)
+                                             begin
 																active_tx = 1'b0; //desativa a transmissao de dados
-																info_send <= 8'h0xFC; //seta o segundo byte para ser enviado
-                                                                choose_case <= s_information; //vai para o estado de envio do segundo byte
-                                                            end
-                                                        else
-                                                            begin
-                                                                choose_case <= s_reading;
+																//info_send <= 8'h0xFC; //seta o segundo byte para ser enviado
+																//info_sensor_made <= 1'b0;
+                                                choose_case <= s_information; //vai para o estado de envio do segundo byte
+                                              end
+                                           else
+															begin
+                                                choose_case <= s_reading;
 															end
 													end
 												else if(info_sensor == 8'd0) //sensor sem problemas
 													begin
 														info_send <= 8'h0x07; //sensor funcionando normalmente
 														active_tx = 1'b1; //ativa o envio de dados pela porta serial
-														if(tx_fineshed == 1'b1) //quando a informação é totalmente enviada entra 
+														info_sensor_made <= 1'b0;
+														if(tx_finished == 1'b1) //quando a informação é totalmente enviada entra 
 															begin
 																active_tx = 1'b0; //desativa a transmissao de dados
-																info_send <= 8'h0xFC; //seta o segundo byte para ser enviado
+																//info_send <= 8'h0xFC; //seta o segundo byte para ser enviado
+																//info_sensor_made <= 1'b0;
 																choose_case <= s_information; //vai para o estado de envio do segundo byte
 															end
-                                                        else //enquanto nao termina de mandar os dados, continua aqui
-                                                            begin
-                                                                choose_case <= s_reading;
-                                                            end
+														 else //enquanto nao termina de mandar os dados, continua aqui
+															begin
+																choose_case <= s_reading;
+															end
 													end
 											end
 									end
@@ -568,7 +583,7 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 														active_tx = 1'b1; //ativa a transmissão da UART
 														if(tx_finished == 1'b1)
 															begin
-																
+																info_send <= 8'd0;
 																active_tx = 1'b0; //uart tx desativada
 																choose_case <= s_idle; //volta para o estado de espera, pois ja terminou de mandar os dados
 															end
@@ -598,6 +613,7 @@ module general_MEF(clock, dht_data, rx_serial,tx_serial, segmento_B, segmento_C,
 										if(tx_finished == 1'b1)
 											begin
 												active_tx <=1'b0;
+												info_send <= 8'd0;
 												choose_case <= s_idle;
 											end
 										else
@@ -662,7 +678,6 @@ assign segmento_A = seg_a;
 
 
 endmodule
-
 
 
 

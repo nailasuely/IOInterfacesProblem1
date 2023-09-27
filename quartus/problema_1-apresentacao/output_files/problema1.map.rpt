@@ -1,0 +1,586 @@
+Analysis & Synthesis report for problema1
+Tue Sep 26 11:30:04 2023
+Quartus Prime Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+
+
+---------------------
+; Table of Contents ;
+---------------------
+  1. Legal Notice
+  2. Analysis & Synthesis Summary
+  3. Analysis & Synthesis Settings
+  4. Parallel Compilation
+  5. Analysis & Synthesis Source Files Read
+  6. Analysis & Synthesis Resource Usage Summary
+  7. Analysis & Synthesis Resource Utilization by Entity
+  8. State Machine - |general_MEF|choose_case
+  9. State Machine - |general_MEF|protocol_02
+ 10. State Machine - |general_MEF|sensor_01_MEF:sensor01|choose_case
+ 11. State Machine - |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|state
+ 12. State Machine - |general_MEF|uart_tx:transmiter_data|state
+ 13. State Machine - |general_MEF|uart_rx:receiver_uart|state
+ 14. Registers Removed During Synthesis
+ 15. General Register Statistics
+ 16. Inverted Register Statistics
+ 17. Multiplexer Restructuring Statistics (Restructuring Performed)
+ 18. Parameter Settings for User Entity Instance: uart_rx:receiver_uart
+ 19. Parameter Settings for User Entity Instance: uart_tx:transmiter_data
+ 20. Port Connectivity Checks: "sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor"
+ 21. Post-Synthesis Netlist Statistics for Top Partition
+ 22. Elapsed Time Per Partition
+ 23. Analysis & Synthesis Messages
+ 24. Analysis & Synthesis Suppressed Messages
+
+
+
+----------------
+; Legal Notice ;
+----------------
+Copyright (C) 2020  Intel Corporation. All rights reserved.
+Your use of Intel Corporation's design tools, logic functions 
+and other software and tools, and any partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Intel Program License 
+Subscription Agreement, the Intel Quartus Prime License Agreement,
+the Intel FPGA IP License Agreement, or other applicable license
+agreement, including, without limitation, that your use is for
+the sole purpose of programming logic devices manufactured by
+Intel and sold by Intel or its authorized distributors.  Please
+refer to the applicable agreement for further details, at
+https://fpgasoftware.intel.com/eula.
+
+
+
++----------------------------------------------------------------------------------+
+; Analysis & Synthesis Summary                                                     ;
++------------------------------------+---------------------------------------------+
+; Analysis & Synthesis Status        ; Successful - Tue Sep 26 11:30:04 2023       ;
+; Quartus Prime Version              ; 20.1.1 Build 720 11/11/2020 SJ Lite Edition ;
+; Revision Name                      ; problema1                                   ;
+; Top-level Entity Name              ; general_MEF                                 ;
+; Family                             ; Cyclone IV E                                ;
+; Total logic elements               ; 647                                         ;
+;     Total combinational functions  ; 530                                         ;
+;     Dedicated logic registers      ; 377                                         ;
+; Total registers                    ; 377                                         ;
+; Total pins                         ; 34                                          ;
+; Total virtual pins                 ; 0                                           ;
+; Total memory bits                  ; 0                                           ;
+; Embedded Multiplier 9-bit elements ; 0                                           ;
+; Total PLLs                         ; 0                                           ;
++------------------------------------+---------------------------------------------+
+
+
++------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Settings                                                                              ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Option                                                           ; Setting            ; Default Value      ;
++------------------------------------------------------------------+--------------------+--------------------+
+; Device                                                           ; EP4CE30F23C7       ;                    ;
+; Top-level entity name                                            ; general_MEF        ; problema1          ;
+; Family name                                                      ; Cyclone IV E       ; Cyclone V          ;
+; Use smart compilation                                            ; Off                ; Off                ;
+; Enable parallel Assembler and Timing Analyzer during compilation ; On                 ; On                 ;
+; Enable compact report table                                      ; Off                ; Off                ;
+; Restructure Multiplexers                                         ; Auto               ; Auto               ;
+; Create Debugging Nodes for IP Cores                              ; Off                ; Off                ;
+; Preserve fewer node names                                        ; On                 ; On                 ;
+; Intel FPGA IP Evaluation Mode                                    ; Enable             ; Enable             ;
+; Verilog Version                                                  ; Verilog_2001       ; Verilog_2001       ;
+; VHDL Version                                                     ; VHDL_1993          ; VHDL_1993          ;
+; State Machine Processing                                         ; Auto               ; Auto               ;
+; Safe State Machine                                               ; Off                ; Off                ;
+; Extract Verilog State Machines                                   ; On                 ; On                 ;
+; Extract VHDL State Machines                                      ; On                 ; On                 ;
+; Ignore Verilog initial constructs                                ; Off                ; Off                ;
+; Iteration limit for constant Verilog loops                       ; 5000               ; 5000               ;
+; Iteration limit for non-constant Verilog loops                   ; 250                ; 250                ;
+; Add Pass-Through Logic to Inferred RAMs                          ; On                 ; On                 ;
+; Infer RAMs from Raw Logic                                        ; On                 ; On                 ;
+; Parallel Synthesis                                               ; On                 ; On                 ;
+; DSP Block Balancing                                              ; Auto               ; Auto               ;
+; NOT Gate Push-Back                                               ; On                 ; On                 ;
+; Power-Up Don't Care                                              ; On                 ; On                 ;
+; Remove Redundant Logic Cells                                     ; Off                ; Off                ;
+; Remove Duplicate Registers                                       ; On                 ; On                 ;
+; Ignore CARRY Buffers                                             ; Off                ; Off                ;
+; Ignore CASCADE Buffers                                           ; Off                ; Off                ;
+; Ignore GLOBAL Buffers                                            ; Off                ; Off                ;
+; Ignore ROW GLOBAL Buffers                                        ; Off                ; Off                ;
+; Ignore LCELL Buffers                                             ; Off                ; Off                ;
+; Ignore SOFT Buffers                                              ; On                 ; On                 ;
+; Limit AHDL Integers to 32 Bits                                   ; Off                ; Off                ;
+; Optimization Technique                                           ; Balanced           ; Balanced           ;
+; Carry Chain Length                                               ; 70                 ; 70                 ;
+; Auto Carry Chains                                                ; On                 ; On                 ;
+; Auto Open-Drain Pins                                             ; On                 ; On                 ;
+; Perform WYSIWYG Primitive Resynthesis                            ; Off                ; Off                ;
+; Auto ROM Replacement                                             ; On                 ; On                 ;
+; Auto RAM Replacement                                             ; On                 ; On                 ;
+; Auto DSP Block Replacement                                       ; On                 ; On                 ;
+; Auto Shift Register Replacement                                  ; Auto               ; Auto               ;
+; Allow Shift Register Merging across Hierarchies                  ; Auto               ; Auto               ;
+; Auto Clock Enable Replacement                                    ; On                 ; On                 ;
+; Strict RAM Replacement                                           ; Off                ; Off                ;
+; Allow Synchronous Control Signals                                ; On                 ; On                 ;
+; Force Use of Synchronous Clear Signals                           ; Off                ; Off                ;
+; Auto RAM Block Balancing                                         ; On                 ; On                 ;
+; Auto RAM to Logic Cell Conversion                                ; Off                ; Off                ;
+; Auto Resource Sharing                                            ; Off                ; Off                ;
+; Allow Any RAM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any ROM Size For Recognition                               ; Off                ; Off                ;
+; Allow Any Shift Register Size For Recognition                    ; Off                ; Off                ;
+; Use LogicLock Constraints during Resource Balancing              ; On                 ; On                 ;
+; Ignore translate_off and synthesis_off directives                ; Off                ; Off                ;
+; Timing-Driven Synthesis                                          ; On                 ; On                 ;
+; Report Parameter Settings                                        ; On                 ; On                 ;
+; Report Source Assignments                                        ; On                 ; On                 ;
+; Report Connectivity Checks                                       ; On                 ; On                 ;
+; Ignore Maximum Fan-Out Assignments                               ; Off                ; Off                ;
+; Synchronization Register Chain Length                            ; 2                  ; 2                  ;
+; Power Optimization During Synthesis                              ; Normal compilation ; Normal compilation ;
+; HDL message level                                                ; Level2             ; Level2             ;
+; Suppress Register Optimization Related Messages                  ; Off                ; Off                ;
+; Number of Removed Registers Reported in Synthesis Report         ; 5000               ; 5000               ;
+; Number of Swept Nodes Reported in Synthesis Report               ; 5000               ; 5000               ;
+; Number of Inverted Registers Reported in Synthesis Report        ; 100                ; 100                ;
+; Clock MUX Protection                                             ; On                 ; On                 ;
+; Auto Gated Clock Conversion                                      ; Off                ; Off                ;
+; Block Design Naming                                              ; Auto               ; Auto               ;
+; SDC constraint protection                                        ; Off                ; Off                ;
+; Synthesis Effort                                                 ; Auto               ; Auto               ;
+; Shift Register Replacement - Allow Asynchronous Clear Signal     ; On                 ; On                 ;
+; Pre-Mapping Resynthesis Optimization                             ; Off                ; Off                ;
+; Analysis & Synthesis Message Level                               ; Medium             ; Medium             ;
+; Disable Register Merging Across Hierarchies                      ; Auto               ; Auto               ;
+; Resource Aware Inference For Block RAM                           ; On                 ; On                 ;
++------------------------------------------------------------------+--------------------+--------------------+
+
+
++------------------------------------------+
+; Parallel Compilation                     ;
++----------------------------+-------------+
+; Processors                 ; Number      ;
++----------------------------+-------------+
+; Number detected on machine ; 6           ;
+; Maximum allowed            ; 6           ;
+;                            ;             ;
+; Average used               ; 1.00        ;
+; Maximum used               ; 6           ;
+;                            ;             ;
+; Usage by Processor         ; % Time Used ;
+;     Processor 1            ; 100.0%      ;
+;     Processor 2            ;   0.0%      ;
+;     Processors 3-6         ;   0.0%      ;
++----------------------------+-------------+
+
+
++-------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Source Files Read                                                                                                                            ;
++----------------------------------+-----------------+------------------------+---------------------------------------------------------------------------+---------+
+; File Name with User-Entered Path ; Used in Netlist ; File Type              ; File Name with Absolute Path                                              ; Library ;
++----------------------------------+-----------------+------------------------+---------------------------------------------------------------------------+---------+
+; DHT11_Made_in_china.v            ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v      ;         ;
+; general_MEF.v                    ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v              ;         ;
+; sensor_01_MEF.v                  ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v            ;         ;
+; timer_continuous.v               ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/timer_continuous.v         ;         ;
+; timer_pulso_mudar_estado.v       ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/timer_pulso_mudar_estado.v ;         ;
+; uart_rx.v                        ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/uart_rx.v                  ;         ;
+; uart_tx.v                        ; yes             ; User Verilog HDL File  ; /home/aluno/Downloads/rp1/depois_do corrompido/uart_tx.v                  ;         ;
++----------------------------------+-----------------+------------------------+---------------------------------------------------------------------------+---------+
+
+
++-----------------------------------------------------------+
+; Analysis & Synthesis Resource Usage Summary               ;
++---------------------------------------------+-------------+
+; Resource                                    ; Usage       ;
++---------------------------------------------+-------------+
+; Estimated Total logic elements              ; 647         ;
+;                                             ;             ;
+; Total combinational functions               ; 530         ;
+; Logic element usage by number of LUT inputs ;             ;
+;     -- 4 input functions                    ; 228         ;
+;     -- 3 input functions                    ; 91          ;
+;     -- <=2 input functions                  ; 211         ;
+;                                             ;             ;
+; Logic elements by mode                      ;             ;
+;     -- normal mode                          ; 344         ;
+;     -- arithmetic mode                      ; 186         ;
+;                                             ;             ;
+; Total registers                             ; 377         ;
+;     -- Dedicated logic registers            ; 377         ;
+;     -- I/O registers                        ; 0           ;
+;                                             ;             ;
+; I/O pins                                    ; 34          ;
+;                                             ;             ;
+; Embedded Multiplier 9-bit elements          ; 0           ;
+;                                             ;             ;
+; Maximum fan-out node                        ; clock~input ;
+; Maximum fan-out                             ; 244         ;
+; Total fan-out                               ; 2980        ;
+; Average fan-out                             ; 3.05        ;
++---------------------------------------------+-------------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Analysis & Synthesis Resource Utilization by Entity                                                                                                                                                                                                                                                                       ;
++------------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------+--------------------------+--------------+
+; Compilation Hierarchy Node                     ; Combinational ALUTs ; Dedicated Logic Registers ; Memory Bits ; DSP Elements ; DSP 9x9 ; DSP 18x18 ; Pins ; Virtual Pins ; Full Hierarchy Name                                                                                 ; Entity Name              ; Library Name ;
++------------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------+--------------------------+--------------+
+; |general_MEF                                   ; 530 (136)           ; 377 (38)                  ; 0           ; 0            ; 0       ; 0         ; 34   ; 0            ; |general_MEF                                                                                        ; general_MEF              ; work         ;
+;    |sensor_01_MEF:sensor01|                    ; 223 (24)            ; 214 (30)                  ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|sensor_01_MEF:sensor01                                                                 ; sensor_01_MEF            ; work         ;
+;       |DHT11_Made_in_china:dht11_sensor|       ; 121 (109)           ; 124 (117)                 ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor                                ; DHT11_Made_in_china      ; work         ;
+;          |generate_clock_1MHZ:clock_1MHz|      ; 12 (12)             ; 7 (7)                     ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz ; generate_clock_1MHZ      ; work         ;
+;       |timer_pulso_mudar_estado:muda_state|    ; 42 (42)             ; 32 (32)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|sensor_01_MEF:sensor01|timer_pulso_mudar_estado:muda_state                             ; timer_pulso_mudar_estado ; work         ;
+;       |timer_pulso_reset:reset_pulse_timer|    ; 36 (36)             ; 28 (28)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|sensor_01_MEF:sensor01|timer_pulso_reset:reset_pulse_timer                             ; timer_pulso_reset        ; work         ;
+;    |timer_continuous:contador_continuo|        ; 42 (42)             ; 32 (32)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|timer_continuous:contador_continuo                                                     ; timer_continuous         ; work         ;
+;    |timer_pulso_mudar_estado:temp_mandar_info| ; 42 (42)             ; 32 (32)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|timer_pulso_mudar_estado:temp_mandar_info                                              ; timer_pulso_mudar_estado ; work         ;
+;    |uart_rx:receiver_uart|                     ; 51 (51)             ; 31 (31)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|uart_rx:receiver_uart                                                                  ; uart_rx                  ; work         ;
+;    |uart_tx:transmiter_data|                   ; 36 (36)             ; 30 (30)                   ; 0           ; 0            ; 0       ; 0         ; 0    ; 0            ; |general_MEF|uart_tx:transmiter_data                                                                ; uart_tx                  ; work         ;
++------------------------------------------------+---------------------+---------------------------+-------------+--------------+---------+-----------+------+--------------+-----------------------------------------------------------------------------------------------------+--------------------------+--------------+
+Note: For table entries with two numbers listed, the numbers in parentheses indicate the number of resources of the given type used by the specific entity alone. The numbers listed outside of parentheses indicate the total resources of the given type used by the specific entity and all of its sub-entities in the hierarchy.
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |general_MEF|choose_case                                                                                                                                                           ;
++---------------------------------+---------------------------------+---------------------------+-----------------------+----------------------------+--------------------------+--------------------+
+; Name                            ; choose_case.s_continuous_letter ; choose_case.s_information ; choose_case.s_reading ; choose_case.s_invalid_code ; choose_case.s_check_code ; choose_case.s_idle ;
++---------------------------------+---------------------------------+---------------------------+-----------------------+----------------------------+--------------------------+--------------------+
+; choose_case.s_idle              ; 0                               ; 0                         ; 0                     ; 0                          ; 0                        ; 0                  ;
+; choose_case.s_check_code        ; 0                               ; 0                         ; 0                     ; 0                          ; 1                        ; 1                  ;
+; choose_case.s_invalid_code      ; 0                               ; 0                         ; 0                     ; 1                          ; 0                        ; 1                  ;
+; choose_case.s_reading           ; 0                               ; 0                         ; 1                     ; 0                          ; 0                        ; 1                  ;
+; choose_case.s_information       ; 0                               ; 1                         ; 0                     ; 0                          ; 0                        ; 1                  ;
+; choose_case.s_continuous_letter ; 1                               ; 0                         ; 0                     ; 0                          ; 0                        ; 1                  ;
++---------------------------------+---------------------------------+---------------------------+-----------------------+----------------------------+--------------------------+--------------------+
+
+
+Encoding Type:  One-Hot
++------------------------------------------+
+; State Machine - |general_MEF|protocol_02 ;
++------------------------------------------+
+; Name                                     ;
++------------------------------------------+
+; protocol_02.00000000                     ;
++------------------------------------------+
+
+
+Encoding Type:  One-Hot
++-----------------------------------------------------------------+
+; State Machine - |general_MEF|sensor_01_MEF:sensor01|choose_case ;
++-----------------------------+-----------------------------------+
+; Name                        ; choose_case.s_receiver_data       ;
++-----------------------------+-----------------------------------+
+; choose_case.s_idle          ; 0                                 ;
+; choose_case.s_receiver_data ; 1                                 ;
++-----------------------------+-----------------------------------+
+
+
+Encoding Type:  One-Hot
++--------------------------------------------------------------------------------------------------------------------------+
+; State Machine - |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|state                               ;
++-----------+-----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+
+; Name      ; state.s10 ; state.s9 ; state.s8 ; state.s7 ; state.s6 ; state.s5 ; state.s4 ; state.s3 ; state.s2 ; state.s1 ;
++-----------+-----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+
+; state.s1  ; 0         ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ;
+; state.s2  ; 0         ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ; 1        ;
+; state.s3  ; 0         ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ; 0        ; 1        ;
+; state.s4  ; 0         ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ; 0        ; 0        ; 1        ;
+; state.s5  ; 0         ; 0        ; 0        ; 0        ; 0        ; 1        ; 0        ; 0        ; 0        ; 1        ;
+; state.s6  ; 0         ; 0        ; 0        ; 0        ; 1        ; 0        ; 0        ; 0        ; 0        ; 1        ;
+; state.s7  ; 0         ; 0        ; 0        ; 1        ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ;
+; state.s8  ; 0         ; 0        ; 1        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ;
+; state.s9  ; 0         ; 1        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ;
+; state.s10 ; 1         ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 0        ; 1        ;
++-----------+-----------+----------+----------+----------+----------+----------+----------+----------+----------+----------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------+
+; State Machine - |general_MEF|uart_tx:transmiter_data|state     ;
++-------------+------------+------------+-------------+----------+
+; Name        ; state.STOP ; state.DATA ; state.START ; state.00 ;
++-------------+------------+------------+-------------+----------+
+; state.00    ; 0          ; 0          ; 0           ; 0        ;
+; state.START ; 0          ; 0          ; 1           ; 1        ;
+; state.DATA  ; 0          ; 1          ; 0           ; 1        ;
+; state.STOP  ; 1          ; 0          ; 0           ; 1        ;
++-------------+------------+------------+-------------+----------+
+
+
+Encoding Type:  One-Hot
++----------------------------------------------------------------+
+; State Machine - |general_MEF|uart_rx:receiver_uart|state       ;
++-------------+------------+------------+-------------+----------+
+; Name        ; state.STOP ; state.DATA ; state.START ; state.00 ;
++-------------+------------+------------+-------------+----------+
+; state.00    ; 0          ; 0          ; 0           ; 0        ;
+; state.START ; 0          ; 0          ; 1           ; 1        ;
+; state.DATA  ; 0          ; 1          ; 0           ; 1        ;
+; state.STOP  ; 1          ; 0          ; 0           ; 1        ;
++-------------+------------+------------+-------------+----------+
+
+
++-----------------------------------------------------------------------------------------------------------+
+; Registers Removed During Synthesis                                                                        ;
++------------------------------------------------------------------+----------------------------------------+
+; Register name                                                    ; Reason for Removal                     ;
++------------------------------------------------------------------+----------------------------------------+
+; seven_segmentos0[3]~reg0                                         ; Merged with seven_segmentos0[0]~reg0   ;
+; seven_segmentos0[4]~reg0                                         ; Merged with seven_segmentos0[0]~reg0   ;
+; seven_segmentos0[5]~reg0                                         ; Merged with seven_segmentos0[0]~reg0   ;
+; seven_segmentos0[2]~reg0                                         ; Merged with seven_segmentos0[1]~reg0   ;
+; seven_segmentos0[6]~reg0                                         ; Merged with seven_segmentos0[1]~reg0   ;
+; seven_segmentos1[3]~reg0                                         ; Merged with seven_segmentos1[0]~reg0   ;
+; seven_segmentos1[4]~reg0                                         ; Merged with seven_segmentos1[0]~reg0   ;
+; seven_segmentos1[5]~reg0                                         ; Merged with seven_segmentos1[0]~reg0   ;
+; seven_segmentos1[6]~reg0                                         ; Merged with seven_segmentos1[0]~reg0   ;
+; seven_segmentos1[2]~reg0                                         ; Merged with seven_segmentos1[1]~reg0   ;
+; seven_segmentos1[1]~reg0                                         ; Stuck at GND due to stuck port data_in ;
+; seven_segmentos0[1]~reg0                                         ; Stuck at GND due to stuck port data_in ;
+; choose_case~8                                                    ; Lost fanout                            ;
+; choose_case~9                                                    ; Lost fanout                            ;
+; choose_case~10                                                   ; Lost fanout                            ;
+; protocol_02~3                                                    ; Lost fanout                            ;
+; protocol_02~4                                                    ; Lost fanout                            ;
+; protocol_02~5                                                    ; Lost fanout                            ;
+; protocol_02~6                                                    ; Lost fanout                            ;
+; protocol_02~7                                                    ; Lost fanout                            ;
+; protocol_02~8                                                    ; Lost fanout                            ;
+; protocol_02~9                                                    ; Lost fanout                            ;
+; protocol_02~10                                                   ; Lost fanout                            ;
+; sensor_01_MEF:sensor01|choose_case~2                             ; Lost fanout                            ;
+; sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|state~13 ; Lost fanout                            ;
+; sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|state~14 ; Lost fanout                            ;
+; sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|state~15 ; Lost fanout                            ;
+; sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|state~16 ; Lost fanout                            ;
+; uart_tx:transmiter_data|state~2                                  ; Lost fanout                            ;
+; uart_tx:transmiter_data|state~3                                  ; Lost fanout                            ;
+; uart_rx:receiver_uart|state~2                                    ; Lost fanout                            ;
+; uart_rx:receiver_uart|state~3                                    ; Lost fanout                            ;
+; Total Number of Removed Registers = 32                           ;                                        ;
++------------------------------------------------------------------+----------------------------------------+
+
+
++------------------------------------------------------+
+; General Register Statistics                          ;
++----------------------------------------------+-------+
+; Statistic                                    ; Value ;
++----------------------------------------------+-------+
+; Total registers                              ; 377   ;
+; Number of registers using Synchronous Clear  ; 178   ;
+; Number of registers using Synchronous Load   ; 19    ;
+; Number of registers using Asynchronous Clear ; 117   ;
+; Number of registers using Asynchronous Load  ; 0     ;
+; Number of registers using Clock Enable       ; 244   ;
+; Number of registers using Preset             ; 0     ;
++----------------------------------------------+-------+
+
+
++-----------------------------------------------------------------------------+
+; Inverted Register Statistics                                                ;
++-------------------------------------------------------------------+---------+
+; Inverted Register                                                 ; Fan out ;
++-------------------------------------------------------------------+---------+
+; request[1]                                                        ; 22      ;
+; request[0]                                                        ; 14      ;
+; sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|dout      ; 2       ;
+; sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|read_flag ; 4       ;
+; uart_rx:receiver_uart|rx_data                                     ; 11      ;
+; uart_rx:receiver_uart|data_serial_buffer                          ; 1       ;
+; Total number of inverted registers = 6                            ;         ;
++-------------------------------------------------------------------+---------+
+
+
++---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
+; Multiplexer Restructuring Statistics (Restructuring Performed)                                                                                                                                    ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------------------------------+
+; Multiplexer Inputs ; Bus Width ; Baseline Area ; Area if Restructured ; Saving if Restructured ; Registered ; Example Multiplexer Output                                                          ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------------------------------+
+; 3:1                ; 31 bits   ; 62 LEs        ; 31 LEs               ; 31 LEs                 ; Yes        ; |general_MEF|timer_pulso_mudar_estado:temp_mandar_info|counter[16]                  ;
+; 3:1                ; 31 bits   ; 62 LEs        ; 31 LEs               ; 31 LEs                 ; Yes        ; |general_MEF|timer_continuous:contador_continuo|counter[15]                         ;
+; 3:1                ; 27 bits   ; 54 LEs        ; 27 LEs               ; 27 LEs                 ; Yes        ; |general_MEF|sensor_01_MEF:sensor01|timer_pulso_reset:reset_pulse_timer|counter[0]  ;
+; 3:1                ; 31 bits   ; 62 LEs        ; 31 LEs               ; 31 LEs                 ; Yes        ; |general_MEF|sensor_01_MEF:sensor01|timer_pulso_mudar_estado:muda_state|counter[28] ;
+; 4:1                ; 3 bits    ; 6 LEs         ; 3 LEs                ; 3 LEs                  ; Yes        ; |general_MEF|uart_tx:transmiter_data|bit_index[0]                                   ;
+; 4:1                ; 3 bits    ; 6 LEs         ; 3 LEs                ; 3 LEs                  ; Yes        ; |general_MEF|uart_rx:receiver_uart|bit_index[0]                                     ;
+; 6:1                ; 8 bits    ; 32 LEs        ; 16 LEs               ; 16 LEs                 ; Yes        ; |general_MEF|sensor_01_MEF:sensor01|information[1]                                  ;
+; 5:1                ; 13 bits   ; 39 LEs        ; 13 LEs               ; 26 LEs                 ; Yes        ; |general_MEF|uart_rx:receiver_uart|counter[8]                                       ;
+; 7:1                ; 6 bits    ; 24 LEs        ; 6 LEs                ; 18 LEs                 ; Yes        ; |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|data_cnt[5]    ;
+; 14:1               ; 2 bits    ; 18 LEs        ; 16 LEs               ; 2 LEs                  ; Yes        ; |general_MEF|seg_a                                                                  ;
+; 10:1               ; 16 bits   ; 96 LEs        ; 16 LEs               ; 80 LEs                 ; Yes        ; |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|cnt[6]         ;
+; 17:1               ; 4 bits    ; 44 LEs        ; 20 LEs               ; 24 LEs                 ; Yes        ; |general_MEF|info_send[5]                                                           ;
+; 3:1                ; 2 bits    ; 4 LEs         ; 4 LEs                ; 0 LEs                  ; No         ; |general_MEF|sensor_01_MEF:sensor01|choose_case                                     ;
+; 11:1               ; 4 bits    ; 28 LEs        ; 16 LEs               ; 12 LEs                 ; No         ; |general_MEF|sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|Selector3      ;
++--------------------+-----------+---------------+----------------------+------------------------+------------+-------------------------------------------------------------------------------------+
+
+
++--------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: uart_rx:receiver_uart ;
++----------------+-------+-------------------------------------------+
+; Parameter Name ; Value ; Type                                      ;
++----------------+-------+-------------------------------------------+
+; CLKS_PER_BIT   ; 5208  ; Signed Integer                            ;
++----------------+-------+-------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++----------------------------------------------------------------------+
+; Parameter Settings for User Entity Instance: uart_tx:transmiter_data ;
++----------------+-------+---------------------------------------------+
+; Parameter Name ; Value ; Type                                        ;
++----------------+-------+---------------------------------------------+
+; CLKS_PER_BIT   ; 5208  ; Signed Integer                              ;
++----------------+-------+---------------------------------------------+
+Note: In order to hide this table in the UI and the text report file, please set the "Show Parameter Settings in Synthesis Report" option in "Analysis and Synthesis Settings -> More Settings" to "Off".
+
+
++------------------------------------------------------------------------------------------------------------------------+
+; Port Connectivity Checks: "sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor"                                    ;
++--------------+--------+----------+-------------------------------------------------------------------------------------+
+; Port         ; Type   ; Severity ; Details                                                                             ;
++--------------+--------+----------+-------------------------------------------------------------------------------------+
+; data[39..24] ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
+; data[15..8]  ; Output ; Info     ; Connected to dangling logic. Logic that only feeds a dangling port will be removed. ;
++--------------+--------+----------+-------------------------------------------------------------------------------------+
+
+
++-----------------------------------------------------+
+; Post-Synthesis Netlist Statistics for Top Partition ;
++-----------------------+-----------------------------+
+; Type                  ; Count                       ;
++-----------------------+-----------------------------+
+; boundary_port         ; 34                          ;
+; cycloneiii_ff         ; 377                         ;
+;     CLR               ; 15                          ;
+;     CLR SCLR          ; 16                          ;
+;     ENA               ; 24                          ;
+;     ENA CLR           ; 80                          ;
+;     ENA CLR SCLR      ; 6                           ;
+;     ENA SCLR          ; 128                         ;
+;     ENA SLD           ; 6                           ;
+;     SCLR              ; 15                          ;
+;     SCLR SLD          ; 13                          ;
+;     plain             ; 74                          ;
+; cycloneiii_io_obuf    ; 1                           ;
+; cycloneiii_lcell_comb ; 530                         ;
+;     arith             ; 186                         ;
+;         2 data inputs ; 165                         ;
+;         3 data inputs ; 21                          ;
+;     normal            ; 344                         ;
+;         0 data inputs ; 1                           ;
+;         1 data inputs ; 12                          ;
+;         2 data inputs ; 33                          ;
+;         3 data inputs ; 70                          ;
+;         4 data inputs ; 228                         ;
+;                       ;                             ;
+; Max LUT depth         ; 7.00                        ;
+; Average LUT depth     ; 3.44                        ;
++-----------------------+-----------------------------+
+
+
++-------------------------------+
+; Elapsed Time Per Partition    ;
++----------------+--------------+
+; Partition Name ; Elapsed Time ;
++----------------+--------------+
+; Top            ; 00:00:01     ;
++----------------+--------------+
+
+
++-------------------------------+
+; Analysis & Synthesis Messages ;
++-------------------------------+
+Info: *******************************************************************
+Info: Running Quartus Prime Analysis & Synthesis
+    Info: Version 20.1.1 Build 720 11/11/2020 SJ Lite Edition
+    Info: Processing started: Tue Sep 26 11:29:57 2023
+Info: Command: quartus_map --read_settings_files=on --write_settings_files=off problema1 -c problema1
+Warning (18236): Number of processors has not been specified which may cause overloading on shared machines.  Set the global assignment NUM_PARALLEL_PROCESSORS in your QSF to an appropriate value for best performance.
+Info (20030): Parallel compilation is enabled and will use 6 of the 6 processors detected
+Info (12021): Found 2 design units, including 2 entities, in source file DHT11_Made_in_china.v
+    Info (12023): Found entity 1: DHT11_Made_in_china File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 3
+    Info (12023): Found entity 2: generate_clock_1MHZ File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 223
+Warning (10335): Unrecognized synthesis attribute "o" at general_MEF.v(127) File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 127
+Warning (10335): Unrecognized synthesis attribute "seletor" at general_MEF.v(127) File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 127
+Warning (10335): Unrecognized synthesis attribute "do" at general_MEF.v(127) File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 127
+Warning (10335): Unrecognized synthesis attribute "buffer" at general_MEF.v(127) File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 127
+Warning (10335): Unrecognized synthesis attribute "para" at general_MEF.v(127) File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 127
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(285): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 285
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(292): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 292
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(316): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 316
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(322): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 322
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(343): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 343
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(349): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 349
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(371): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 371
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(400): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 400
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(446): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 446
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(463): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 463
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(497): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 497
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(523): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 523
+Warning (10229): Verilog HDL Expression warning at general_MEF.v(611): truncated literal to match 8 bits File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 611
+Info (12021): Found 1 design units, including 1 entities, in source file general_MEF.v
+    Info (12023): Found entity 1: general_MEF File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 2
+Info (12021): Found 2 design units, including 2 entities, in source file sensor_01_MEF.v
+    Info (12023): Found entity 1: sensor_01_MEF File: /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v Line: 3
+    Info (12023): Found entity 2: timer_pulso_reset File: /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v Line: 222
+Info (12021): Found 1 design units, including 1 entities, in source file timer_continuous.v
+    Info (12023): Found entity 1: timer_continuous File: /home/aluno/Downloads/rp1/depois_do corrompido/timer_continuous.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file timer_pulso_mudar_estado.v
+    Info (12023): Found entity 1: timer_pulso_mudar_estado File: /home/aluno/Downloads/rp1/depois_do corrompido/timer_pulso_mudar_estado.v Line: 1
+Info (12021): Found 1 design units, including 1 entities, in source file uart_rx.v
+    Info (12023): Found entity 1: uart_rx File: /home/aluno/Downloads/rp1/depois_do corrompido/uart_rx.v Line: 2
+Info (12021): Found 1 design units, including 1 entities, in source file uart_tx.v
+    Info (12023): Found entity 1: uart_tx File: /home/aluno/Downloads/rp1/depois_do corrompido/uart_tx.v Line: 2
+Info (12127): Elaborating entity "general_MEF" for the top level hierarchy
+Warning (10036): Verilog HDL or VHDL warning at general_MEF.v(65): object "counter" assigned a value but never read File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 65
+Warning (10036): Verilog HDL or VHDL warning at general_MEF.v(66): object "cnt" assigned a value but never read File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 66
+Warning (10036): Verilog HDL or VHDL warning at general_MEF.v(67): object "counter_continuous" assigned a value but never read File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 67
+Info (12128): Elaborating entity "uart_rx" for hierarchy "uart_rx:receiver_uart" File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 97
+Info (12128): Elaborating entity "uart_tx" for hierarchy "uart_tx:transmiter_data" File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 172
+Info (12128): Elaborating entity "timer_pulso_mudar_estado" for hierarchy "timer_pulso_mudar_estado:temp_mandar_info" File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 179
+Info (12128): Elaborating entity "timer_continuous" for hierarchy "timer_continuous:contador_continuo" File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 186
+Info (12128): Elaborating entity "sensor_01_MEF" for hierarchy "sensor_01_MEF:sensor01" File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 205
+Info (12128): Elaborating entity "timer_pulso_reset" for hierarchy "sensor_01_MEF:sensor01|timer_pulso_reset:reset_pulse_timer" File: /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v Line: 64
+Info (12128): Elaborating entity "DHT11_Made_in_china" for hierarchy "sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor" File: /home/aluno/Downloads/rp1/depois_do corrompido/sensor_01_MEF.v Line: 70
+Warning (10230): Verilog HDL assignment warning at DHT11_Made_in_china.v(170): truncated value with size 41 to match size of target (40) File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 170
+Warning (10230): Verilog HDL assignment warning at DHT11_Made_in_china.v(173): truncated value with size 41 to match size of target (40) File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 173
+Info (12128): Elaborating entity "generate_clock_1MHZ" for hierarchy "sensor_01_MEF:sensor01|DHT11_Made_in_china:dht11_sensor|generate_clock_1MHZ:clock_1MHz" File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 33
+Info (13000): Registers with preset signals will power-up high File: /home/aluno/Downloads/rp1/depois_do corrompido/DHT11_Made_in_china.v Line: 20
+Info (13003): DEV_CLRn pin will set, and not reset, register with preset signal due to NOT Gate Push-Back
+Warning (13024): Output pins are stuck at VCC or GND
+    Warning (13410): Pin "seven_segmentos0[1]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 216
+    Warning (13410): Pin "seven_segmentos0[2]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 216
+    Warning (13410): Pin "seven_segmentos0[6]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 216
+    Warning (13410): Pin "seven_segmentos1[1]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 216
+    Warning (13410): Pin "seven_segmentos1[2]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 216
+    Warning (13410): Pin "coluna[0]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 8
+    Warning (13410): Pin "coluna[1]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 8
+    Warning (13410): Pin "coluna[2]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 8
+    Warning (13410): Pin "coluna[3]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 8
+    Warning (13410): Pin "coluna[4]" is stuck at GND File: /home/aluno/Downloads/rp1/depois_do corrompido/general_MEF.v Line: 8
+Info (286030): Timing-Driven Synthesis is running
+Info (17049): 20 registers lost all their fanouts during netlist optimizations.
+Info (144001): Generated suppressed messages file /home/aluno/Downloads/rp1/depois_do corrompido/output_files/problema1.map.smsg
+Info (16010): Generating hard_block partition "hard_block:auto_generated_inst"
+    Info (16011): Adding 0 node(s), including 0 DDIO, 0 PLL, 0 transceiver and 0 LCELL
+Info (21057): Implemented 685 device resources after synthesis - the final resource count might be different
+    Info (21058): Implemented 2 input pins
+    Info (21059): Implemented 31 output pins
+    Info (21060): Implemented 1 bidirectional pins
+    Info (21061): Implemented 651 logic cells
+Info: Quartus Prime Analysis & Synthesis was successful. 0 errors, 35 warnings
+    Info: Peak virtual memory: 441 megabytes
+    Info: Processing ended: Tue Sep 26 11:30:04 2023
+    Info: Elapsed time: 00:00:07
+    Info: Total CPU time (on all processors): 00:00:13
+
+
++------------------------------------------+
+; Analysis & Synthesis Suppressed Messages ;
++------------------------------------------+
+The suppressed messages can be found in /home/aluno/Downloads/rp1/depois_do corrompido/output_files/problema1.map.smsg.
+
+

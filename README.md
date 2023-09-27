@@ -304,6 +304,30 @@ Para executar o protótipo, é necessário seguir alguns passos. Inicialmente, b
 ![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
 
 ## Testes
+ <div align="center">
+	 <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-29-08.png" alt="Síntese">
+	 <p>
+      	Teste para medida de temperatura.
+    </p>
+</div>
+<div align="center">
+     <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-30-35.png" alt="Síntese">
+	 <p>
+      	Teste para medida de umidade.
+    </p>
+</div>
+<div align="center">
+    <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-33-17.png" alt="Síntese">
+	 <p>
+      	Teste para sensoriamento de umidade contínua.
+    </p>
+</div>
+<div align="center">
+    <img src="https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/Captura%20de%20tela%20de%202023-09-26%2015-31-54.png" alt="Síntese">
+	 <p>
+      	Teste para desativar sensoriamento contínuo. 
+    </p>	 
+</div>
 
 ![-----------------------------------------------------](https://github.com/nailasuely/IOInterfacesProblem1/blob/master/img/rainbow.png)
 
