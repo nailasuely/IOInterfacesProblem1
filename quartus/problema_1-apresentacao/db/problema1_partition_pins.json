@@ -1,0 +1,105 @@
+{
+	"partitions" : [
+		{
+			"name" : "Top",
+			"pins" : [
+				{
+					"name" : "tx_serial",
+					"strict" : false
+				},
+				{
+					"name" : "segmento_B",
+					"strict" : false
+				},
+				{
+					"name" : "segmento_C",
+					"strict" : false
+				},
+				{
+					"name" : "segmento_A",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos0[0]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos0[3]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos0[4]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos0[5]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos1[0]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos1[3]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos1[4]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos1[5]",
+					"strict" : false
+				},
+				{
+					"name" : "seven_segmentos1[6]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[0]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[1]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[2]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[3]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[4]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[5]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[6]",
+					"strict" : false
+				},
+				{
+					"name" : "linha[7]",
+					"strict" : false
+				},
+				{
+					"name" : "dht_data",
+					"strict" : false
+				},
+				{
+					"name" : "clock",
+					"strict" : false
+				},
+				{
+					"name" : "rx_serial",
+					"strict" : false
+				}
+			]
+		}
+	]
+}
